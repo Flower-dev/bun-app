@@ -1,11 +1,13 @@
-
-function App() {
-
-  return (
-    <h1 className="text-3xl font-bold underline text-green-500">
-      Hello world!
-    </h1>
-  )
+import "@blocknote/core/fonts/inter.css";
+import { BlockNoteView } from "@blocknote/mantine";
+import "@blocknote/mantine/style.css";
+import { useCreateBlockNote } from "@blocknote/react";
+ 
+export default function App() {
+  // Creates a new editor instance.
+  const editor = useCreateBlockNote();
+ 
+  // Renders the editor instance using a React component.
+  return <BlockNoteView editor={editor} />;
 }
-
-export default App
+ 
