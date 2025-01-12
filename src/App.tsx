@@ -2,7 +2,7 @@ import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
-import { Button } from "@/components/ui/button"
+import Layout from "./app/layout";
 import "./index.css"
  
 export default function App() {
@@ -11,12 +11,9 @@ export default function App() {
  
   // Renders the editor instance using a React component.
   return(
-<>
-<Button>Click me</Button>
-
-<BlockNoteView editor={editor} />
-</>
-
+    <Layout>
+    <BlockNoteView editor={editor} />
+    </Layout>
   ) ;
 }
  
