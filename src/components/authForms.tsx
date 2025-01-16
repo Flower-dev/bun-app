@@ -6,12 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from '../context/authContext';
 import type { LoginData, RegisterData } from '@/types/auth';
+import { useTranslation } from 'react-i18next';
 
 const AuthForms = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+
+  const { t } = useTranslation();
   
   const [loginData, setLoginData] = useState<LoginData>({
     email: '',
@@ -68,10 +71,10 @@ const AuthForms = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <section className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{isLoginMode ? 'Connexion' : 'Inscription'}</CardTitle>
+          <CardTitle> {t(isLoginMode ? 'auth.login.title' : 'auth.register.title')}</CardTitle>
           <CardDescription>
             {isLoginMode 
               ? 'Connectez-vous à votre compte' 
@@ -162,7 +165,7 @@ const AuthForms = () => {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </section>
   );
 };
 

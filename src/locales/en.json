@@ -1,0 +1,32 @@
+{
+    "auth": {
+      "login": {
+        "title": "Login",
+        "description": "Sign in to your account",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "submitButton": "Sign in",
+        "switchToRegister": "No account yet? Sign up"
+      },
+      "register": {
+        "title": "Register",
+        "description": "Create a new account",
+        "usernamePlaceholder": "Username",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "confirmPasswordPlaceholder": "Confirm password",
+        "submitButton": "Sign up",
+        "switchToLogin": "Already have an account? Sign in"
+      },
+      "validation": {
+        "required": "Please fill in all fields",
+        "passwordMismatch": "Passwords do not match",
+        "invalidEmail": "Invalid email address"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "welcome": "Welcome, {{username}}",
+      "logoutButton": "Sign out"
+    }
+  }
