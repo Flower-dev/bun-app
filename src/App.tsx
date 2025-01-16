@@ -1,19 +1,29 @@
-import "@blocknote/core/fonts/inter.css";
-import { BlockNoteView } from "@blocknote/mantine";
-import "@blocknote/mantine/style.css";
-import { useCreateBlockNote } from "@blocknote/react";
-import Layout from "./app/layout";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AuthForms from './components/authForms';
+import Dashboard from './components/dashboard';
+import { AuthProvider } from './context/authContext';
+import { ProtectedRoute } from './routes/protectedRoutes';
 import "./index.css"
- 
-export default function App() {
-  // Creates a new editor instance.
-  const editor = useCreateBlockNote();
- 
-  // Renders the editor instance using a React component.
-  return(
-    <Layout>
-    <BlockNoteView editor={editor} />
-    </Layout>
-  ) ;
-}
- 
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth" element={<AuthForms />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/" element={<Navigate to="/auth" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+};
+
+export default App;
