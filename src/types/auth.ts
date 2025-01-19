@@ -20,3 +20,8 @@ export interface User {
     login: (userData: User) => void;
     logout: () => void;
   }
+
+  export interface AuthError {
+    message: string;
+    code: string;
+  }

@@ -9,7 +9,9 @@ const App = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
+      
         <Routes>
+      
           <Route path="/auth" element={<AuthForms />} />
           <Route 
             path="/dashboard" 

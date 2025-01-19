@@ -1,5 +1,6 @@
+import { useAuth } from '../context/authContext';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
-
 import {
   Sidebar,
   SidebarContent,
@@ -9,7 +10,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter
 } from "@/components/ui/sidebar"
+import { Button } from "./ui/button"
 
 // Menu items.
 const items = [
@@ -40,7 +43,18 @@ const items = [
   },
 ]
 
+
+
 export function AppSidebar() {
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
+  };
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -61,7 +75,13 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        
       </SidebarContent>
+        <SidebarFooter>
+        <Button onClick={handleLogout} >
+            Déconnexion
+        </Button>
+        </SidebarFooter>
     </Sidebar>
   )
 }

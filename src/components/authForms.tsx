@@ -1,80 +1,32 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from '../context/authContext';
-import type { LoginData, RegisterData } from '@/types/auth';
+import { useAuthForms } from '../hooks/use-authform';
 import { useTranslation } from 'react-i18next';
 
-const AuthForms = () => {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  
+const AuthForms: React.FC = () => {
+  const {
+    isLoginMode,
+    error,
+    loginData,
+    registerData,
+    handleLogin,
+    handleRegister,
+    toggleMode,
+    updateLoginData,
+    updateRegisterData
+  } = useAuthForms();
+
 
   const { t } = useTranslation();
-  
-  const [loginData, setLoginData] = useState<LoginData>({
-    email: '',
-    password: ''
-  });
-
-  const [registerData, setRegisterData] = useState<RegisterData>({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    username: ''
-  });
-
-  const handleLogin = (e: React.FormEvent): void => {
-    e.preventDefault();
-    
-    if (!loginData.email || !loginData.password) {
-      setError('Veuillez remplir tous les champs');
-      return;
-    }
-
-    const userData = {
-      email: loginData.email,
-      isAuthenticated: true,
-      timestamp: new Date().getTime()
-    };
-
-    login(userData);
-    navigate('/dashboard');
-  };
-
-  const handleRegister = (e: React.FormEvent): void => {
-    e.preventDefault();
-    
-    if (!registerData.email || !registerData.password || !registerData.confirmPassword || !registerData.username) {
-      setError('Veuillez remplir tous les champs');
-      return;
-    }
-
-    if (registerData.password !== registerData.confirmPassword) {
-      setError('Les mots de passe ne correspondent pas');
-      return;
-    }
-
-    const userData = {
-      email: registerData.email,
-      username: registerData.username,
-      isAuthenticated: true,
-      timestamp: new Date().getTime()
-    };
-
-    login(userData);
-    navigate('/dashboard');
-  };
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle> {t(isLoginMode ? 'auth.login.title' : 'auth.register.title')}</CardTitle>
+        <CardHeader className="flex justify-center">
+          <CardTitle>{t(isLoginMode ? 'Connexion' : 'Inscription')}</CardTitle>
           <CardDescription>
             {isLoginMode 
               ? 'Connectez-vous à votre compte' 
@@ -84,67 +36,66 @@ const AuthForms = () => {
         <CardContent>
           {error && (
             <Alert variant="destructive" className="mb-4">
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           )}
           
           {isLoginMode ? (
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  type="email"
-                  placeholder="Email"
-                  value={loginData.email}
-                  onChange={(e) => setLoginData({...loginData, email: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Input
-                  type="password"
-                  placeholder="Mot de passe"
-                  value={loginData.password}
-                  onChange={(e) => setLoginData({...loginData, password: e.target.value})}
-                />
-              </div>
-              <Button type="submit" className="w-full">
+            <form onSubmit={handleLogin} className="space-y-4" data-testid="login-form">
+              <Input
+                type="email"
+                placeholder="jane.doe@gmail.com"
+                value={loginData.email}
+                onChange={(e) => updateLoginData('email', e.target.value)}
+                data-testid="login-email"
+              />
+            
+              <Input
+                type="password"
+                placeholder="Mot de passe"
+                value={loginData.password}
+                onChange={(e) => updateLoginData('password', e.target.value)}
+                data-testid="login-password"
+              />
+      
+              <Button type="submit" className="w-full" data-testid="login-submit">
                 Se connecter
               </Button>
             </form>
           ) : (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  type="text"
-                  placeholder="Nom d'utilisateur"
-                  value={registerData.username}
-                  onChange={(e) => setRegisterData({...registerData, username: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Input
-                  type="email"
-                  placeholder="Email"
-                  value={registerData.email}
-                  onChange={(e) => setRegisterData({...registerData, email: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Input
-                  type="password"
-                  placeholder="Mot de passe"
-                  value={registerData.password}
-                  onChange={(e) => setRegisterData({...registerData, password: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Input
-                  type="password"
-                  placeholder="Confirmer le mot de passe"
-                  value={registerData.confirmPassword}
-                  onChange={(e) => setRegisterData({...registerData, confirmPassword: e.target.value})}
-                />
-              </div>
-              <Button type="submit" className="w-full">
+            <form onSubmit={handleRegister} className="space-y-4" data-testid="register-form">
+              <Input
+                type="text"
+                placeholder="Jane"
+                value={registerData.username}
+                onChange={(e) => updateRegisterData('username', e.target.value)}
+                data-testid="register-username"
+              />
+    
+              <Input
+                type="email"
+                placeholder="jane.doe@gmail.com"
+                value={registerData.email}
+                onChange={(e) => updateRegisterData('email', e.target.value)}
+                data-testid="register-email"
+              />
+           
+              <Input
+                type="password"
+                placeholder="Mot de passe"
+                value={registerData.password}
+                onChange={(e) => updateRegisterData('password', e.target.value)}
+                data-testid="register-password"
+              />
+ 
+              <Input
+                type="password"
+                placeholder="Confirmer le mot de passe"
+                value={registerData.confirmPassword}
+                onChange={(e) => updateRegisterData('confirmPassword', e.target.value)}
+                data-testid="register-confirm-password"
+              />
+              <Button type="submit" className="w-full" data-testid="register-submit">
                 S'inscrire
               </Button>
             </form>
@@ -153,11 +104,9 @@ const AuthForms = () => {
         <CardFooter>
           <Button 
             variant="link" 
-            onClick={() => {
-              setIsLoginMode(!isLoginMode);
-              setError('');
-            }}
+            onClick={toggleMode}
             className="w-full"
+            data-testid="toggle-mode"
           >
             {isLoginMode 
               ? "Pas encore de compte ? S'inscrire" 
