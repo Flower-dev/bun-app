@@ -1,5 +1,5 @@
 import { useAuth } from '../context/authContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
 import {
   Sidebar,
@@ -14,31 +14,15 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "./ui/button"
 
-// Menu items.
 const items = [
   {
     title: "Home",
-    url: "#",
+    path: "/dashboard", 
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
     title: "Settings",
-    url: "#",
+    path: "/settings",
     icon: Settings,
   },
 ]
@@ -48,7 +32,8 @@ const items = [
 export function AppSidebar() {
 
   const { logout } = useAuth();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -64,11 +49,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
+                  <SidebarMenuButton 
+                    asChild
+                    className={location.pathname === item.path ? "bg-gray-100" : ""}
+                  >
+                    <Link to={item.path}>
+                      <item.icon className="mr-2" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

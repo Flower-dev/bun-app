@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthForms from './components/authForms';
-import Dashboard from './components/dashboard';
+import Dashboard from './app/dashboard';
+import Settings from './app/settings';
 import { AuthProvider } from './context/authContext';
 import { ProtectedRoute } from './routes/protectedRoutes';
 import "./index.css"
@@ -18,6 +19,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             } 
           />
