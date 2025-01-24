@@ -1,32 +1,32 @@
 {
     "auth": {
-      "login": {
-        "title": "Connexion",
-        "description": "Connectez-vous à votre compte",
-        "emailPlaceholder": "Email",
-        "passwordPlaceholder": "Mot de passe",
-        "submitButton": "Se connecter",
-        "switchToRegister": "Pas encore de compte ? S'inscrire"
-      },
-      "register": {
-        "title": "Inscription",
-        "description": "Créez un nouveau compte",
-        "usernamePlaceholder": "Nom d'utilisateur",
-        "emailPlaceholder": "Email",
-        "passwordPlaceholder": "Mot de passe",
-        "confirmPasswordPlaceholder": "Confirmer le mot de passe",
-        "submitButton": "S'inscrire",
-        "switchToLogin": "Déjà un compte ? Se connecter"
-      },
-      "validation": {
-        "required": "Veuillez remplir tous les champs",
-        "passwordMismatch": "Les mots de passe ne correspondent pas",
-        "invalidEmail": "Adresse email invalide"
-      }
+        "login": {
+            "title": "Connexion",
+            "description": "Connectez-vous à votre compte",
+            "emailPlaceholder": "Email",
+            "passwordPlaceholder": "Mot de passe",
+            "submitButton": "Se connecter",
+            "switchToRegister": "Pas encore de compte ? S'inscrire"
+        },
+        "register": {
+            "title": "Inscription",
+            "description": "Créez un nouveau compte",
+            "usernamePlaceholder": "Nom d'utilisateur",
+            "emailPlaceholder": "Email",
+            "passwordPlaceholder": "Mot de passe",
+            "confirmPasswordPlaceholder": "Confirmer le mot de passe",
+            "submitButton": "S'inscrire",
+            "switchToLogin": "Déjà un compte ? Se connecter"
+        },
+        "validation": {
+            "required": "Veuillez remplir tous les champs",
+            "passwordMismatch": "Les mots de passe ne correspondent pas",
+            "invalidEmail": "Adresse email invalide"
+        }
     },
     "dashboard": {
-      "title": "Tableau de bord",
-      "welcome": "Bienvenue, {{username}}",
-      "logoutButton": "Déconnexion"
+        "title": "Tableau de bord",
+        "welcome": "Bienvenue, {{username}}",
+        "logoutButton": "Déconnexion"
     }
-  }
+}

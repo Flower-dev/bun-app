@@ -3,8 +3,8 @@
 const server = Bun.serve({
     port: 3000,
     fetch() {
-      return new Response("Bun!");
+        return new Response('Bun!')
     },
-  });
-  
-  console.log(`Listening on http://localhost:${server.port} ...`);
+})
+
+console.log(`Listening on http://localhost:${server.port} ...`)
