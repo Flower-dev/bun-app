@@ -28,7 +28,7 @@ const AuthForms: React.FC = () => {
     const { t } = useTranslation()
 
     return (
-        <section className="min-h-screen flex items-center justify-center bg-gray-100">
+        <main className="min-h-screen flex items-center justify-center bg-gray-100">
             <Card className="w-full max-w-md">
                 <CardHeader className="flex justify-center">
                     <CardTitle>
@@ -158,7 +158,7 @@ const AuthForms: React.FC = () => {
                     </Button>
                 </CardFooter>
             </Card>
-        </section>
+        </main>
     )
 }
 
