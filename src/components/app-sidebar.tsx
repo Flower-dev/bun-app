@@ -1,6 +1,6 @@
 import { useAuth } from '../context/authContext'
-import { useNavigate, Link, useLocation } from 'react-router-dom'
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Home, Settings } from 'lucide-react'
 import {
     Sidebar,
     SidebarContent,
@@ -30,7 +30,7 @@ const items = [
 export function AppSidebar() {
     const { logout } = useAuth()
     const navigate = useNavigate()
-    const location = useLocation()
+    // const location = useLocation()
 
     const handleLogout = () => {
         logout()
@@ -48,11 +48,11 @@ export function AppSidebar() {
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton
                                         asChild
-                                        className={
-                                            location.pathname === item.path
-                                                ? 'bg-gray-100'
-                                                : ''
-                                        }
+                                        // className={
+                                        //     location.pathname === item.path
+                                        //         ? 'bg-gray-100'
+                                        //         : ''
+                                        // }
                                     >
                                         <Link to={item.path}>
                                             <item.icon className="mr-2" />

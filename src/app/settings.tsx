@@ -16,7 +16,7 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Bell, User, Shield, Palette, Globe } from 'lucide-react'
+import { Bell, User, Shield, Palette } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { toast } from '@/hooks/use-toast'
 import { ModeToggle } from '@/components/mode-toggle'
