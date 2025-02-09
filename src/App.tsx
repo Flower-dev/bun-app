@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AuthForms from './components/authForms'
 import Dashboard from './app/dashboard'
 import Settings from './app/settings'
+import RssLandingPage from './app/landing'
 import { AuthProvider } from './context/authContext'
 import { ThemeProvider } from './context/themeContext'
 import { ProtectedRoute } from './routes/protectedRoutes'
@@ -13,6 +14,7 @@ const App = () => {
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                 <BrowserRouter>
                     <Routes>
+                        <Route path="/" element={<RssLandingPage />} />
                         <Route path="/auth" element={<AuthForms />} />
                         <Route
                             path="/dashboard"
