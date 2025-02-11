@@ -15,6 +15,7 @@
         "typescript": "^5.0.0"
     },
     "dependencies": {
+        "@elysiajs/jwt": "^1.2.0",
         "elysia": "^1.2.11"
     }
 }

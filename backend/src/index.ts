@@ -1,35 +1,60 @@
 import { Elysia } from 'elysia'
-
-import { Database } from 'bun:sqlite'
-
-const bouh = () => {
-    return 'Hello Bouh'
-}
-
-const login = () => {
-    return 'toto test'
-}
-
-const init = () => {
-    const db = new Database('mydb.sqlite')
-    const query = db.query(`
-		CREATE TABLE IF NOT EXISTS users (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			username TEXT NOT NULL UNIQUE,
-			email TEXT NOT NULL UNIQUE,
-			password TEXT NOT NULL
-    	)`)
-    return query.run()
-    // const query = db.query("select 'Hello world' as message;");
-    // return query.get(); // => { message: "Hello world" }
-}
+import { createTable, getDb } from './utils/db'
 
 const app = new Elysia()
-    .get('/', bouh)
-    .get('/login', login)
-    .get('/init', init)
-    .listen(3000)
 
-console.log(
-    `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-)
+// Route pour récupérer tous les utilisateurs
+app.get('/', async () => {
+    try {
+        const db = getDb()
+        const rows = db.query('SELECT * FROM users').all()
+        return rows
+    } catch (error) {
+        console.error('Error fetching users:', error)
+        return { error: 'Internal server error' }
+    }
+})
+
+// Route pour ajouter un utilisateur
+app.post('/users', async ({ body }) => {
+    try {
+        const db = getDb()
+        const { username, email, password } = body as {
+            username: string
+            email: string
+            password: string
+        }
+
+        if (!username || !email || !password) {
+            return { error: 'Missing required fields' }
+        }
+
+        db.run(
+            'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+            [username, email, password]
+        )
+
+        return { message: 'User created successfully' }
+    } catch (error) {
+        console.error('Error creating user:', error)
+        return { error: 'Internal server error' }
+    }
+})
+
+app.get('/users', async () => {
+    try {
+        const db = getDb()
+        //const users = db.query('SELECT * FROM users').all();
+        const users = db.query('SELECT id, email FROM users').all()
+        return users
+    } catch (error) {
+        console.error('Error fetching users:', error)
+        return { error: 'Internal server error' }
+    }
+})
+
+// Lancement du serveur
+app.listen(3000, async () => {
+    await createTable()
+    console.log('Server is running on http://localhost:3000')
+})
