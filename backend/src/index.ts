@@ -7,7 +7,7 @@ const app = new Elysia()
 app.get('/', async () => {
     try {
         const db = getDb()
-        const rows = db.query('SELECT * FROM users').all()
+        const rows = db.query('SELECT id, email FROM users').all()
         return rows
     } catch (error) {
         console.error('Error fetching users:', error)
@@ -37,18 +37,6 @@ app.post('/users', async ({ body }) => {
         return { message: 'User created successfully' }
     } catch (error) {
         console.error('Error creating user:', error)
-        return { error: 'Internal server error' }
-    }
-})
-
-app.get('/users', async () => {
-    try {
-        const db = getDb()
-        //const users = db.query('SELECT * FROM users').all();
-        const users = db.query('SELECT id, email FROM users').all()
-        return users
-    } catch (error) {
-        console.error('Error fetching users:', error)
         return { error: 'Internal server error' }
     }
 })
