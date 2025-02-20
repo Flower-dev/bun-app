@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Github } from 'lucide-react'
+import { Github } from 'lucide-react'
 
 const RssLandingPage = () => {
     const handleLoginRedirect = () => {
