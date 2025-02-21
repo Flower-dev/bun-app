@@ -1,15 +1,13 @@
-import { Elysia } from 'elysia'
-import { jwt } from '@elysiajs/jwt'
+import { Elysia, t } from 'elysia'
 import bcrypt from 'bcrypt'
 import { createTable, getDb } from './utils/db'
 
-const app = new Elysia().use(
-    jwt({
-        name: 'jwt',
-        secret: process.env.SECRET_KEY || 'fallback_secret',
-        exp: '7d',
-    })
-)
+const app = new Elysia()
+
+const customBody = t.Object({
+    email: t.String(),
+    password: t.String(),
+})
 
 app.onError(({ code, error }) => {
     console.error(`${code}: ${error?.toString()}`)
@@ -59,57 +57,15 @@ app.onError(({ code, error }) => {
         }
     })
 
-    // .post('/login', async ({ body, jwt }) => {
-    //     const db = getDb();
-    //     const { email, password } = body as { email: string; password: string };
-
-    //     if (!email || !password) {
-    //         return { error: 'Email and password are required' };
-    //     }
-
-    //     // Vérifier si l'utilisateur existe
-    //     const user = db.query('SELECT * FROM users WHERE email = ?').get(email);
-    //     if (!user) {
-    //         return { error: 'Invalid email or password' };
-    //     }
-
-    //     const isPasswordValid = await bcrypt.compare(password, user.password);
-    //     if (!isPasswordValid) {
-    //         return { error: 'Invalid email or password' };
-    //     }
-
-    //     // Generate JWT token
-    //     const token = await jwt.sign({
-    //         userId: user.id,
-    //         username: user.username
-    //     });
-
-    //     return { message: 'Login successful', token };
-    // })
-
-    // .guard(
-    //     {
-    //         beforeHandle: async ({ jwt, request }) => {
-    //             const authHeader = request.headers.get('Authorization');
-    //             if (!authHeader) throw new Error('No token provided');
-
-    //             const token = authHeader.split(' ')[1];
-    //             if (!token) throw new Error('Invalid token format');
-
-    //             const verified = await jwt.verify(token);
-    //             if (!verified) throw new Error('Invalid or expired token');
-
-    //             return verified;
-    //         }
-    //     },
-    //     (app) =>
-    //         app.get('/dashboard', async ({ store }) => {
-    //             if (!store?.userId) {
-    //                 throw new Error('Unauthorized');
-    //             }
-    //             return { message: 'Protected dashboard route', user: store };
-    //         })
-    // )
+    .post(
+        '/login',
+        ({ body }) => {
+            return body
+        },
+        {
+            body: customBody,
+        }
+    )
 
     .listen(3000, async () => {
         await createTable()
