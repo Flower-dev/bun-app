@@ -8,7 +8,7 @@ const registerSchema = t.Object({
     password: t.String(),
 })
 
-export const register = new Elysia().post(
+export const register = new Elysia({ prefix: '/auth' }).post(
     '/register',
     async ({ body }) => {
         try {

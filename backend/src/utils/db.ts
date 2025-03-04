@@ -1,9 +1,9 @@
 import { Database } from 'bun:sqlite'
 
-const db = new Database('database.sqlite')
+const db = new Database('database.sqlite', { create: true })
 
-export async function createTable() {
-    db.run(`
+export function createTable() {
+    const stmt = db.prepare(`
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
@@ -11,6 +11,7 @@ export async function createTable() {
             password TEXT NOT NULL
         )
     `)
+    stmt.run()
 }
 
 export function getDb() {
