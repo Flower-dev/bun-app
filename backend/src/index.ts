@@ -1,10 +1,20 @@
 import { Elysia } from 'elysia'
 import { createTable } from './utils/db'
 import { swagger } from '@elysiajs/swagger'
+import { cors } from '@elysiajs/cors'
 import { users } from './routes/users'
 import { auth } from './routes/auth'
 import { register } from './routes/register'
+
 new Elysia()
+    .use(
+        cors({
+            origin: ['http://localhost:5173'], // Ajoutez l'URL de votre frontend
+            credentials: true,
+            allowedHeaders: ['Content-Type'],
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        })
+    )
     .use(
         swagger({
             documentation: {

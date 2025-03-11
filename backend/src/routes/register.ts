@@ -40,17 +40,13 @@ export const register = new Elysia({ prefix: '/auth' }).post(
             }
 
             const existingUser = db
-                .query('SELECT * FROM users WHERE username = ?')
-                .get(username)
+                .query('SELECT id FROM users WHERE username = ? OR email = ?')
+                .get(username, email)
             if (existingUser) {
-                return { status: 409, error: 'Username already exists' }
-            }
-
-            const existingEmail = db
-                .query('SELECT * FROM users WHERE email = ?')
-                .get(email)
-            if (existingEmail) {
-                return { status: 409, error: 'Email already exists' }
+                return {
+                    status: 409,
+                    error: 'Username or email already exists',
+                }
             }
 
             const saltRounds = 10

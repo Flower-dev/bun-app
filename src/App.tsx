@@ -1,45 +1,44 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import AuthForms from './components/authForms'
-import Dashboard from './app/dashboard'
-import Settings from './app/settings'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { LoginPage } from './components/auth/login'
+import { SignupPage } from './components/auth/register'
+import Dashboard from './app/pages/dashboard'
 import RssLandingPage from './app/landing'
 import { AuthProvider } from './context/authContext'
 import { ThemeProvider } from './context/themeContext'
-import { ProtectedRoute } from './routes/protectedRoutes'
+import DashboardLayout from './components/layouts/layout'
+
 import './index.css'
+import Profile from './app/pages/profile'
+import Settings from './app/settings'
+
+// Create a client
+const queryClient = new QueryClient()
 
 const App = () => {
     return (
-        <AuthProvider>
-            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<RssLandingPage />} />
-                        <Route path="/auth" element={<AuthForms />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/signup" element={<SignupPage />} />
                         <Route
-                            path="/dashboard"
                             element={
-                                <ProtectedRoute>
-                                    <Dashboard />
-                                </ProtectedRoute>
+                                <ThemeProvider storageKey="vite-ui-theme">
+                                    <DashboardLayout />
+                                </ThemeProvider>
                             }
-                        />
-                        <Route
-                            path="/settings"
-                            element={
-                                <ProtectedRoute>
-                                    <Settings />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/"
-                            element={<Navigate to="/auth" replace />}
-                        />
+                        >
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/settings" element={<Settings />} />
+                        </Route>
                     </Routes>
                 </BrowserRouter>
-            </ThemeProvider>
-        </AuthProvider>
+            </AuthProvider>
+        </QueryClientProvider>
     )
 }
 

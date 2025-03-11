@@ -1,5 +1,4 @@
-import React from 'react'
-import { Moon, Sun, Monitor } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -9,53 +8,25 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useTheme } from '../context/themeContext'
 
-const THEME_CONFIG = [
-    {
-        value: 'light',
-        label: 'Light',
-        icon: Sun,
-    },
-    {
-        value: 'dark',
-        label: 'Dark',
-        icon: Moon,
-    },
-    {
-        value: 'system',
-        label: 'System',
-        icon: Monitor,
-    },
-]
-
 export function ModeToggle() {
-    const { theme, setTheme } = useTheme()
+    const { setTheme } = useTheme()
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    className="flex items-center gap-2"
-                >
-                    {React.createElement(
-                        THEME_CONFIG.find((t) => t.value === theme)?.icon ||
-                            Sun,
-                        { className: 'h-[1.2rem] w-[1.2rem]' }
-                    )}
-                    <span className="sr-only">Toggle theme</span>
+                <Button variant="ghost" size="icon">
+                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <span className="sr-only">Changer de thème</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                {THEME_CONFIG.map(({ value, label, icon: Icon }) => (
-                    <DropdownMenuItem
-                        key={value}
-                        onClick={() => setTheme(value)}
-                        className={theme === value ? 'bg-accent' : ''}
-                    >
-                        <Icon className="mr-2 h-4 w-4" /> {label}
-                    </DropdownMenuItem>
-                ))}
+                <DropdownMenuItem onClick={() => setTheme('light')}>
+                    Clair
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                    Sombre
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )

@@ -1,10 +1,18 @@
 import { useState } from 'react'
-import Layout from '@/components/layouts/layout'
-import { useAuth } from '@/context/authContext'
+import { useQuery } from '@tanstack/react-query'
+import {
+    Loader2,
+    Save,
+    Trash2,
+    Download,
+    Upload,
+    Shield,
+    Bell,
+    Monitor,
+    Database,
+    Sliders,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
     Card,
     CardContent,
@@ -13,331 +21,1213 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Bell, User, Shield, Palette } from 'lucide-react'
+import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { toast } from '@/hooks/use-toast'
-import { ModeToggle } from '@/components/mode-toggle'
-import Language from '@/components/languages'
+import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import { Slider } from '@/components/ui/slider'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { useToast } from '@/hooks/use-toast'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
-interface NotificationSetting {
-    id: string
-    title: string
-    description: string
-    enabled: boolean
+// Simuler une API pour récupérer les paramètres
+const fetchSettings = async () => {
+    // Simuler un délai réseau
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    return {
+        general: {
+            language: 'fr',
+            startPage: 'dashboard',
+            autoRefresh: true,
+            refreshInterval: 30,
+        },
+        notifications: {
+            newArticles: true,
+            newArticlesSound: false,
+            digestEmail: true,
+            digestFrequency: 'daily',
+            pushNotifications: true,
+        },
+        display: {
+            articleDensity: 'comfortable',
+            fontSize: 16,
+            showImages: true,
+            showSummary: true,
+            markReadOnScroll: true,
+            openLinksIn: 'new-tab',
+        },
+        data: {
+            cacheSize: 100,
+            keepArticles: '30days',
+            autoCleanup: true,
+            exportFormat: 'opml',
+        },
+        advanced: {
+            enableKeyboardShortcuts: true,
+            enableBetaFeatures: false,
+            debugMode: false,
+            customCSS: '',
+        },
+    }
 }
 
-interface UserProfile {
-    fullName: string
-    email: string
-    avatar?: string
-}
+export default function Settings() {
+    const { toast } = useToast()
+    const [isSaving, setIsSaving] = useState(false)
 
-const Settings = () => {
-    const { user } = useAuth()
-    const [profile, setProfile] = useState<UserProfile>({
-        fullName: user?.name || '',
-        email: user?.email || '',
-        avatar: user?.avatar,
+    const { data: settings, isLoading } = useQuery({
+        queryKey: ['settings'],
+        queryFn: fetchSettings,
     })
 
-    const [notifications, setNotifications] = useState<NotificationSetting[]>([
-        {
-            id: 'email',
-            title: 'Email Notifications',
-            description: 'Receive email notifications for important updates',
-            enabled: true,
+    const [formData, setFormData] = useState({
+        general: {
+            language: 'fr',
+            startPage: 'dashboard',
+            autoRefresh: true,
+            refreshInterval: 30,
         },
-        {
-            id: 'push',
-            title: 'Push Notifications',
-            description: 'Receive push notifications on your devices',
-            enabled: false,
+        notifications: {
+            newArticles: true,
+            newArticlesSound: false,
+            digestEmail: true,
+            digestFrequency: 'daily',
+            pushNotifications: true,
         },
-        {
-            id: 'marketing',
-            title: 'Marketing Emails',
-            description: 'Receive marketing and promotional emails',
-            enabled: false,
+        display: {
+            articleDensity: 'comfortable',
+            fontSize: 16,
+            showImages: true,
+            showSummary: true,
+            markReadOnScroll: true,
+            openLinksIn: 'new-tab',
         },
-    ])
+        data: {
+            cacheSize: 100,
+            keepArticles: '30days',
+            autoCleanup: true,
+            exportFormat: 'opml',
+        },
+        advanced: {
+            enableKeyboardShortcuts: true,
+            enableBetaFeatures: false,
+            debugMode: false,
+            customCSS: '',
+        },
+    })
 
-    const handleProfileUpdate = (e: React.FormEvent) => {
-        e.preventDefault()
+    // Mettre à jour les données du formulaire lorsque les paramètres sont chargés
+    useState(() => {
+        if (settings) {
+            setFormData(settings)
+        }
+    })
+
+    const handleSaveSettings = (tab: string) => {
+        setIsSaving(true)
+
+        // Simuler une sauvegarde
+        setTimeout(() => {
+            setIsSaving(false)
+            toast({
+                title: 'Paramètres enregistrés',
+                description: `Les paramètres ${tab} ont été mis à jour avec succès`,
+            })
+        }, 1500)
+    }
+
+    const handleExportData = () => {
         toast({
-            title: 'Profile Updated',
-            description: 'Your profile changes have been saved successfully.',
+            title: 'Exportation des données',
+            description: 'Vos données ont été exportées avec succès',
         })
     }
 
-    const toggleNotification = (id: string) => {
-        setNotifications(
-            notifications.map((notification) =>
-                notification.id === id
-                    ? { ...notification, enabled: !notification.enabled }
-                    : notification
-            )
+    const handleImportData = () => {
+        toast({
+            title: 'Importation des données',
+            description: 'Vos données ont été importées avec succès',
+        })
+    }
+
+    const handleResetSettings = () => {
+        toast({
+            title: 'Paramètres réinitialisés',
+            description:
+                'Tous les paramètres ont été réinitialisés aux valeurs par défaut',
+        })
+    }
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
         )
     }
 
     return (
-        <Layout>
-            <h1 className="text-2xl font-bold mb-6">Settings</h1>
+        <div className="space-y-6">
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight">
+                    Paramètres
+                </h1>
+                <p className="text-muted-foreground">
+                    Personnalisez votre expérience avec l'application RSS Feed
+                </p>
+            </div>
 
-            <Tabs defaultValue="profile" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-4 lg:w-1/2">
-                    <TabsTrigger
-                        value="profile"
-                        className="flex items-center gap-2"
-                    >
-                        <User className="h-4 w-4" />
-                        Profile
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="notifications"
-                        className="flex items-center gap-2"
-                    >
-                        <Bell className="h-4 w-4" />
+            <Tabs defaultValue="general">
+                <TabsList className="mb-4 grid grid-cols-5 md:w-auto w-full">
+                    <TabsTrigger value="general">Général</TabsTrigger>
+                    <TabsTrigger value="notifications">
                         Notifications
                     </TabsTrigger>
-                    <TabsTrigger
-                        value="security"
-                        className="flex items-center gap-2"
-                    >
-                        <Shield className="h-4 w-4" />
-                        Security
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="preferences"
-                        className="flex items-center gap-2"
-                    >
-                        <Palette className="h-4 w-4" />
-                        Preferences
-                    </TabsTrigger>
+                    <TabsTrigger value="display">Affichage</TabsTrigger>
+                    <TabsTrigger value="data">Données</TabsTrigger>
+                    <TabsTrigger value="advanced">Avancé</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="profile">
-                    <Card className="bg-muted/50">
+                {/* Paramètres généraux */}
+                <TabsContent value="general">
+                    <Card>
                         <CardHeader>
-                            <CardTitle>Profile Information</CardTitle>
+                            <CardTitle className="flex items-center">
+                                <Monitor className="mr-2 h-5 w-5" />
+                                Paramètres généraux
+                            </CardTitle>
                             <CardDescription>
-                                Update your personal information and profile
-                                settings
+                                Configurez les paramètres de base de
+                                l'application
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <form
-                                onSubmit={handleProfileUpdate}
-                                className="space-y-4"
-                            >
-                                <div className="flex items-center space-x-4">
-                                    <Avatar className="h-20 w-20">
-                                        <AvatarImage
-                                            src={profile.avatar}
-                                            alt={profile.fullName}
-                                        />
-                                        <AvatarFallback>
-                                            {profile.fullName.charAt(0)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <Button variant="outline">
-                                        Change Avatar
-                                    </Button>
-                                </div>
+                        <CardContent className="space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="language">Langue</Label>
+                                <Select
+                                    value={formData.general.language}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            general: {
+                                                ...formData.general,
+                                                language: value,
+                                            },
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger id="language">
+                                        <SelectValue placeholder="Sélectionner une langue" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="fr">
+                                            Français
+                                        </SelectItem>
+                                        <SelectItem value="en">
+                                            English
+                                        </SelectItem>
+                                        <SelectItem value="es">
+                                            Español
+                                        </SelectItem>
+                                        <SelectItem value="de">
+                                            Deutsch
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                                <Separator className="my-4" />
+                            <div className="space-y-2">
+                                <Label htmlFor="startPage">
+                                    Page de démarrage
+                                </Label>
+                                <Select
+                                    value={formData.general.startPage}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            general: {
+                                                ...formData.general,
+                                                startPage: value,
+                                            },
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger id="startPage">
+                                        <SelectValue placeholder="Sélectionner une page" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="dashboard">
+                                            Tableau de bord
+                                        </SelectItem>
+                                        <SelectItem value="feeds">
+                                            Mes flux
+                                        </SelectItem>
+                                        <SelectItem value="discover">
+                                            Découvrir
+                                        </SelectItem>
+                                        <SelectItem value="last-session">
+                                            Dernière session
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                                <div className="grid gap-4">
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label
-                                            htmlFor="fullName"
-                                            className="text-right"
-                                        >
-                                            Full Name
+                            <Separator />
+
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="autoRefresh">
+                                        Actualisation automatique
+                                    </Label>
+                                    <p className="text-sm text-muted-foreground">
+                                        Actualiser automatiquement les flux RSS
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="autoRefresh"
+                                    checked={formData.general.autoRefresh}
+                                    onCheckedChange={(checked) =>
+                                        setFormData({
+                                            ...formData,
+                                            general: {
+                                                ...formData.general,
+                                                autoRefresh: checked,
+                                            },
+                                        })
+                                    }
+                                />
+                            </div>
+
+                            {formData.general.autoRefresh && (
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label htmlFor="refreshInterval">
+                                            Intervalle d'actualisation (minutes)
                                         </Label>
-                                        <Input
-                                            id="fullName"
-                                            value={profile.fullName}
-                                            onChange={(e) =>
-                                                setProfile({
-                                                    ...profile,
-                                                    fullName: e.target.value,
-                                                })
-                                            }
-                                            className="col-span-3"
-                                        />
+                                        <span className="text-sm">
+                                            {formData.general.refreshInterval}{' '}
+                                            min
+                                        </span>
                                     </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label
-                                            htmlFor="email"
-                                            className="text-right"
-                                        >
-                                            Email
-                                        </Label>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            value={profile.email}
-                                            onChange={(e) =>
-                                                setProfile({
-                                                    ...profile,
-                                                    email: e.target.value,
-                                                })
-                                            }
-                                            className="col-span-3"
-                                        />
+                                    <Slider
+                                        id="refreshInterval"
+                                        min={5}
+                                        max={120}
+                                        step={5}
+                                        value={[
+                                            formData.general.refreshInterval,
+                                        ]}
+                                        onValueChange={(value) =>
+                                            setFormData({
+                                                ...formData,
+                                                general: {
+                                                    ...formData.general,
+                                                    refreshInterval: value[0],
+                                                },
+                                            })
+                                        }
+                                    />
+                                    <div className="flex justify-between text-xs text-muted-foreground">
+                                        <span>5 min</span>
+                                        <span>30 min</span>
+                                        <span>60 min</span>
+                                        <span>120 min</span>
                                     </div>
                                 </div>
-                            </form>
+                            )}
                         </CardContent>
-                        <CardFooter className="flex justify-end">
-                            <Button onClick={handleProfileUpdate}>
-                                Save Changes
+                        <CardFooter>
+                            <Button
+                                onClick={() => handleSaveSettings('généraux')}
+                                disabled={isSaving}
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Enregistrement...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Enregistrer
+                                    </>
+                                )}
                             </Button>
                         </CardFooter>
                     </Card>
                 </TabsContent>
 
+                {/* Paramètres de notifications */}
                 <TabsContent value="notifications">
-                    <Card className="bg-muted/50">
+                    <Card>
                         <CardHeader>
-                            <CardTitle>Notification Preferences</CardTitle>
+                            <CardTitle className="flex items-center">
+                                <Bell className="mr-2 h-5 w-5" />
+                                Paramètres de notifications
+                            </CardTitle>
                             <CardDescription>
-                                Manage how you receive notifications and updates
+                                Configurez comment et quand vous souhaitez être
+                                notifié
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            {notifications.map((notification) => (
-                                <div
-                                    key={notification.id}
-                                    className="flex items-center justify-between space-x-4"
-                                >
-                                    <div>
-                                        <h4 className="font-medium">
-                                            {notification.title}
-                                        </h4>
-                                        <p className="text-sm text-gray-500">
-                                            {notification.description}
+                        <CardContent className="space-y-6">
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium">
+                                    Notifications dans l'application
+                                </h3>
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="newArticles">
+                                            Nouveaux articles
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Afficher une notification pour les
+                                            nouveaux articles
                                         </p>
                                     </div>
                                     <Switch
-                                        checked={notification.enabled}
-                                        onCheckedChange={() =>
-                                            toggleNotification(notification.id)
+                                        id="newArticles"
+                                        checked={
+                                            formData.notifications.newArticles
+                                        }
+                                        onCheckedChange={(checked) =>
+                                            setFormData({
+                                                ...formData,
+                                                notifications: {
+                                                    ...formData.notifications,
+                                                    newArticles: checked,
+                                                },
+                                            })
                                         }
                                     />
                                 </div>
-                            ))}
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="security">
-                    <Card className="bg-muted/50">
-                        <CardHeader>
-                            <CardTitle>Security Settings</CardTitle>
-                            <CardDescription>
-                                Manage your security preferences and two-factor
-                                authentication
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <div>
-                                        <h4 className="font-medium">
-                                            Two-Factor Authentication
-                                        </h4>
-                                        <p className="text-sm text-gray-500">
-                                            Add an extra layer of security to
-                                            your account
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="newArticlesSound">
+                                            Son de notification
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Jouer un son lors de la réception de
+                                            nouveaux articles
                                         </p>
                                     </div>
-                                    <Switch />
+                                    <Switch
+                                        id="newArticlesSound"
+                                        checked={
+                                            formData.notifications
+                                                .newArticlesSound
+                                        }
+                                        onCheckedChange={(checked) =>
+                                            setFormData({
+                                                ...formData,
+                                                notifications: {
+                                                    ...formData.notifications,
+                                                    newArticlesSound: checked,
+                                                },
+                                            })
+                                        }
+                                    />
                                 </div>
+                            </div>
 
-                                <Separator />
+                            <Separator />
 
-                                <div>
-                                    <h4 className="font-medium mb-2">
-                                        Password
-                                    </h4>
-                                    <Button variant="outline">
-                                        Change Password
-                                    </Button>
-                                </div>
-
-                                <Separator />
-
-                                <div>
-                                    <h4 className="font-medium mb-2">
-                                        Active Sessions
-                                    </h4>
-                                    <div className="rounded-lg border p-4">
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <p className="font-medium">
-                                                    Current Browser
-                                                </p>
-                                                <p className="text-sm text-gray-500">
-                                                    Last active: Just now
-                                                </p>
-                                            </div>
-                                            <Badge>Active</Badge>
-                                        </div>
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium">
+                                    Notifications par email
+                                </h3>
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="digestEmail">
+                                            Résumé par email
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Recevoir un résumé des nouveaux
+                                            articles par email
+                                        </p>
                                     </div>
+                                    <Switch
+                                        id="digestEmail"
+                                        checked={
+                                            formData.notifications.digestEmail
+                                        }
+                                        onCheckedChange={(checked) =>
+                                            setFormData({
+                                                ...formData,
+                                                notifications: {
+                                                    ...formData.notifications,
+                                                    digestEmail: checked,
+                                                },
+                                            })
+                                        }
+                                    />
+                                </div>
+
+                                {formData.notifications.digestEmail && (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="digestFrequency">
+                                            Fréquence du résumé
+                                        </Label>
+                                        <Select
+                                            value={
+                                                formData.notifications
+                                                    .digestFrequency
+                                            }
+                                            onValueChange={(value) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    notifications: {
+                                                        ...formData.notifications,
+                                                        digestFrequency: value,
+                                                    },
+                                                })
+                                            }
+                                        >
+                                            <SelectTrigger id="digestFrequency">
+                                                <SelectValue placeholder="Sélectionner une fréquence" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="daily">
+                                                    Quotidien
+                                                </SelectItem>
+                                                <SelectItem value="weekly">
+                                                    Hebdomadaire
+                                                </SelectItem>
+                                                <SelectItem value="monthly">
+                                                    Mensuel
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium">
+                                    Notifications push
+                                </h3>
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="pushNotifications">
+                                            Notifications push
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Recevoir des notifications push pour
+                                            les nouveaux articles
+                                        </p>
+                                    </div>
+                                    <Switch
+                                        id="pushNotifications"
+                                        checked={
+                                            formData.notifications
+                                                .pushNotifications
+                                        }
+                                        onCheckedChange={(checked) =>
+                                            setFormData({
+                                                ...formData,
+                                                notifications: {
+                                                    ...formData.notifications,
+                                                    pushNotifications: checked,
+                                                },
+                                            })
+                                        }
+                                    />
                                 </div>
                             </div>
                         </CardContent>
+                        <CardFooter>
+                            <Button
+                                onClick={() =>
+                                    handleSaveSettings('de notifications')
+                                }
+                                disabled={isSaving}
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Enregistrement...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Enregistrer
+                                    </>
+                                )}
+                            </Button>
+                        </CardFooter>
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="preferences">
-                    <Card className="bg-muted/50">
+                {/* Paramètres d'affichage */}
+                <TabsContent value="display">
+                    <Card>
                         <CardHeader>
-                            <CardTitle>Preferences</CardTitle>
+                            <CardTitle className="flex items-center">
+                                <Monitor className="mr-2 h-5 w-5" />
+                                Paramètres d'affichage
+                            </CardTitle>
                             <CardDescription>
-                                Customize your application experience
+                                Personnalisez l'apparence et le comportement de
+                                l'interface
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <h4 className="font-medium">
-                                            Dark Mode
-                                        </h4>
-                                        <p className="text-sm text-gray-500">
-                                            Toggle dark mode theme
-                                        </p>
+                        <CardContent className="space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="articleDensity">
+                                    Densité des articles
+                                </Label>
+                                <RadioGroup
+                                    id="articleDensity"
+                                    value={formData.display.articleDensity}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            display: {
+                                                ...formData.display,
+                                                articleDensity: value,
+                                            },
+                                        })
+                                    }
+                                    className="flex space-x-4"
+                                >
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="compact"
+                                            id="density-compact"
+                                        />
+                                        <Label htmlFor="density-compact">
+                                            Compact
+                                        </Label>
                                     </div>
-                                    <ModeToggle />
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="comfortable"
+                                            id="density-comfortable"
+                                        />
+                                        <Label htmlFor="density-comfortable">
+                                            Confortable
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="spacious"
+                                            id="density-spacious"
+                                        />
+                                        <Label htmlFor="density-spacious">
+                                            Spacieux
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="fontSize">
+                                        Taille de police
+                                    </Label>
+                                    <span className="text-sm">
+                                        {formData.display.fontSize}px
+                                    </span>
                                 </div>
+                                <Slider
+                                    id="fontSize"
+                                    min={12}
+                                    max={24}
+                                    step={1}
+                                    value={[formData.display.fontSize]}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            display: {
+                                                ...formData.display,
+                                                fontSize: value[0],
+                                            },
+                                        })
+                                    }
+                                />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>12px</span>
+                                    <span>16px</span>
+                                    <span>20px</span>
+                                    <span>24px</span>
+                                </div>
+                            </div>
 
-                                <Separator />
+                            <Separator />
 
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium">
+                                    Contenu des articles
+                                </h3>
                                 <div className="flex items-center justify-between">
-                                    <div>
-                                        <h4 className="font-medium">
-                                            Language
-                                        </h4>
-                                        <p className="text-sm text-gray-500">
-                                            Select your preferred language
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="showImages">
+                                            Afficher les images
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Afficher les images dans les
+                                            articles
                                         </p>
                                     </div>
-                                    <div className="flex items-center">
-                                        <Language />
+                                    <Switch
+                                        id="showImages"
+                                        checked={formData.display.showImages}
+                                        onCheckedChange={(checked) =>
+                                            setFormData({
+                                                ...formData,
+                                                display: {
+                                                    ...formData.display,
+                                                    showImages: checked,
+                                                },
+                                            })
+                                        }
+                                    />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="showSummary">
+                                            Afficher les résumés
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Afficher les résumés des articles
+                                            dans la liste
+                                        </p>
                                     </div>
+                                    <Switch
+                                        id="showSummary"
+                                        checked={formData.display.showSummary}
+                                        onCheckedChange={(checked) =>
+                                            setFormData({
+                                                ...formData,
+                                                display: {
+                                                    ...formData.display,
+                                                    showSummary: checked,
+                                                },
+                                            })
+                                        }
+                                    />
+                                </div>
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium">
+                                    Comportement
+                                </h3>
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="markReadOnScroll">
+                                            Marquer comme lu au défilement
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Marquer automatiquement les articles
+                                            comme lus lors du défilement
+                                        </p>
+                                    </div>
+                                    <Switch
+                                        id="markReadOnScroll"
+                                        checked={
+                                            formData.display.markReadOnScroll
+                                        }
+                                        onCheckedChange={(checked) =>
+                                            setFormData({
+                                                ...formData,
+                                                display: {
+                                                    ...formData.display,
+                                                    markReadOnScroll: checked,
+                                                },
+                                            })
+                                        }
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="openLinksIn">
+                                        Ouvrir les liens dans
+                                    </Label>
+                                    <Select
+                                        value={formData.display.openLinksIn}
+                                        onValueChange={(value) =>
+                                            setFormData({
+                                                ...formData,
+                                                display: {
+                                                    ...formData.display,
+                                                    openLinksIn: value,
+                                                },
+                                            })
+                                        }
+                                    >
+                                        <SelectTrigger id="openLinksIn">
+                                            <SelectValue placeholder="Sélectionner une option" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="new-tab">
+                                                Nouvel onglet
+                                            </SelectItem>
+                                            <SelectItem value="same-tab">
+                                                Même onglet
+                                            </SelectItem>
+                                            <SelectItem value="reader-view">
+                                                Vue lecteur
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
                         </CardContent>
+                        <CardFooter>
+                            <Button
+                                onClick={() =>
+                                    handleSaveSettings("d'affichage")
+                                }
+                                disabled={isSaving}
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Enregistrement...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Enregistrer
+                                    </>
+                                )}
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </TabsContent>
+
+                {/* Paramètres de données */}
+                <TabsContent value="data">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center">
+                                <Database className="mr-2 h-5 w-5" />
+                                Données et stockage
+                            </CardTitle>
+                            <CardDescription>
+                                Gérez vos données et options de stockage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="cacheSize">
+                                        Taille du cache (MB)
+                                    </Label>
+                                    <span className="text-sm">
+                                        {formData.data.cacheSize} MB
+                                    </span>
+                                </div>
+                                <Slider
+                                    id="cacheSize"
+                                    min={50}
+                                    max={500}
+                                    step={50}
+                                    value={[formData.data.cacheSize]}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            data: {
+                                                ...formData.data,
+                                                cacheSize: value[0],
+                                            },
+                                        })
+                                    }
+                                />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>50 MB</span>
+                                    <span>200 MB</span>
+                                    <span>350 MB</span>
+                                    <span>500 MB</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="keepArticles">
+                                    Conserver les articles
+                                </Label>
+                                <Select
+                                    value={formData.data.keepArticles}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            data: {
+                                                ...formData.data,
+                                                keepArticles: value,
+                                            },
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger id="keepArticles">
+                                        <SelectValue placeholder="Sélectionner une durée" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="7days">
+                                            7 jours
+                                        </SelectItem>
+                                        <SelectItem value="30days">
+                                            30 jours
+                                        </SelectItem>
+                                        <SelectItem value="90days">
+                                            90 jours
+                                        </SelectItem>
+                                        <SelectItem value="forever">
+                                            Indéfiniment
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="autoCleanup">
+                                        Nettoyage automatique
+                                    </Label>
+                                    <p className="text-sm text-muted-foreground">
+                                        Nettoyer automatiquement les anciens
+                                        articles
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="autoCleanup"
+                                    checked={formData.data.autoCleanup}
+                                    onCheckedChange={(checked) =>
+                                        setFormData({
+                                            ...formData,
+                                            data: {
+                                                ...formData.data,
+                                                autoCleanup: checked,
+                                            },
+                                        })
+                                    }
+                                />
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-2">
+                                <Label htmlFor="exportFormat">
+                                    Format d'exportation
+                                </Label>
+                                <Select
+                                    value={formData.data.exportFormat}
+                                    onValueChange={(value) =>
+                                        setFormData({
+                                            ...formData,
+                                            data: {
+                                                ...formData.data,
+                                                exportFormat: value,
+                                            },
+                                        })
+                                    }
+                                >
+                                    <SelectTrigger id="exportFormat">
+                                        <SelectValue placeholder="Sélectionner un format" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="opml">
+                                            OPML
+                                        </SelectItem>
+                                        <SelectItem value="json">
+                                            JSON
+                                        </SelectItem>
+                                        <SelectItem value="xml">XML</SelectItem>
+                                        <SelectItem value="csv">CSV</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={handleExportData}
+                                >
+                                    <Download className="mr-2 h-4 w-4" />
+                                    Exporter les données
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={handleImportData}
+                                >
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    Importer des données
+                                </Button>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button
+                                onClick={() => handleSaveSettings('de données')}
+                                disabled={isSaving}
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Enregistrement...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Enregistrer
+                                    </>
+                                )}
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </TabsContent>
+
+                {/* Paramètres avancés */}
+                <TabsContent value="advanced">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center">
+                                <Sliders className="mr-2 h-5 w-5" />
+                                Paramètres avancés
+                            </CardTitle>
+                            <CardDescription>
+                                Options avancées pour les utilisateurs
+                                expérimentés
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="enableKeyboardShortcuts">
+                                        Raccourcis clavier
+                                    </Label>
+                                    <p className="text-sm text-muted-foreground">
+                                        Activer les raccourcis clavier pour
+                                        naviguer rapidement
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="enableKeyboardShortcuts"
+                                    checked={
+                                        formData.advanced
+                                            .enableKeyboardShortcuts
+                                    }
+                                    onCheckedChange={(checked) =>
+                                        setFormData({
+                                            ...formData,
+                                            advanced: {
+                                                ...formData.advanced,
+                                                enableKeyboardShortcuts:
+                                                    checked,
+                                            },
+                                        })
+                                    }
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="enableBetaFeatures">
+                                        Fonctionnalités bêta
+                                    </Label>
+                                    <p className="text-sm text-muted-foreground">
+                                        Activer les fonctionnalités
+                                        expérimentales
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="enableBetaFeatures"
+                                    checked={
+                                        formData.advanced.enableBetaFeatures
+                                    }
+                                    onCheckedChange={(checked) =>
+                                        setFormData({
+                                            ...formData,
+                                            advanced: {
+                                                ...formData.advanced,
+                                                enableBetaFeatures: checked,
+                                            },
+                                        })
+                                    }
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="debugMode">
+                                        Mode débogage
+                                    </Label>
+                                    <p className="text-sm text-muted-foreground">
+                                        Activer le mode débogage pour les
+                                        développeurs
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="debugMode"
+                                    checked={formData.advanced.debugMode}
+                                    onCheckedChange={(checked) =>
+                                        setFormData({
+                                            ...formData,
+                                            advanced: {
+                                                ...formData.advanced,
+                                                debugMode: checked,
+                                            },
+                                        })
+                                    }
+                                />
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-2">
+                                <Label htmlFor="customCSS">
+                                    CSS personnalisé
+                                </Label>
+                                <p className="text-sm text-muted-foreground">
+                                    Ajoutez du CSS personnalisé pour modifier
+                                    l'apparence de l'application
+                                </p>
+                                <textarea
+                                    id="customCSS"
+                                    className="w-full min-h-[150px] p-2 border rounded-md bg-background"
+                                    value={formData.advanced.customCSS}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            advanced: {
+                                                ...formData.advanced,
+                                                customCSS: e.target.value,
+                                            },
+                                        })
+                                    }
+                                    placeholder="/* Ajoutez votre CSS personnalisé ici */"
+                                />
+                            </div>
+
+                            <Separator />
+
+                            <div className="space-y-2">
+                                <h3 className="text-lg font-medium text-destructive">
+                                    Zone de danger
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Ces actions sont irréversibles. Procédez
+                                    avec prudence.
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-2">
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button
+                                                variant="destructive"
+                                                className="flex-1"
+                                            >
+                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                Réinitialiser tous les
+                                                paramètres
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>
+                                                    Êtes-vous absolument sûr?
+                                                </AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Cette action ne peut pas
+                                                    être annulée. Cela
+                                                    réinitialisera tous vos
+                                                    paramètres aux valeurs par
+                                                    défaut.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>
+                                                    Annuler
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={
+                                                        handleResetSettings
+                                                    }
+                                                >
+                                                    Réinitialiser
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button
+                                                variant="destructive"
+                                                className="flex-1"
+                                            >
+                                                <Shield className="mr-2 h-4 w-4" />
+                                                Supprimer toutes les données
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>
+                                                    Êtes-vous absolument sûr?
+                                                </AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Cette action ne peut pas
+                                                    être annulée. Cela
+                                                    supprimera définitivement
+                                                    toutes vos données et
+                                                    abonnements.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>
+                                                    Annuler
+                                                </AlertDialogCancel>
+                                                <AlertDialogAction className="bg-destructive">
+                                                    Supprimer
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button
+                                onClick={() => handleSaveSettings('avancés')}
+                                disabled={isSaving}
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Enregistrement...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Enregistrer
+                                    </>
+                                )}
+                            </Button>
+                        </CardFooter>
                     </Card>
                 </TabsContent>
             </Tabs>
-        </Layout>
+        </div>
     )
 }
-
-export default Settings
