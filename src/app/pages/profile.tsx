@@ -1,7 +1,6 @@
 import type React from 'react'
 
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Loader2, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,35 +25,12 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-
-// Simuler une API pour récupérer les données du profil
-const fetchProfile = async () => {
-    // Simuler un délai réseau
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    return {
-        name: 'Jean Dupont',
-        email: 'jean.dupont@example.com',
-        bio: "Passionné de technologie et d'actualités",
-        preferences: {
-            theme: 'system',
-            emailNotifications: true,
-            pushNotifications: false,
-            articlesPerPage: 10,
-            markReadOnScroll: true,
-            openLinksInNewTab: true,
-        },
-    }
-}
+import { useUser } from '@/hooks/use-user'
 
 export default function Profile() {
     const { toast } = useToast()
     const [isSaving, setIsSaving] = useState(false)
-
-    const { data: profile, isLoading } = useQuery({
-        queryKey: ['profile'],
-        queryFn: fetchProfile,
-    })
+    const { data: userData, isLoading } = useUser()
 
     const [formData, setFormData] = useState({
         name: '',
@@ -76,14 +52,12 @@ export default function Profile() {
 
     // Mettre à jour les données du formulaire lorsque le profil est chargé
     useState(() => {
-        if (profile) {
+        if (userData?.user) {
             setFormData({
                 ...formData,
-                name: profile.name,
-                email: profile.email,
-                bio: profile.bio,
+                name: userData.user.username,
+                email: userData.user.email,
             })
-            setPreferences(profile.preferences)
         }
     })
 

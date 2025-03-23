@@ -2,14 +2,14 @@ import { Elysia } from 'elysia'
 import { createTable } from './utils/db'
 import { swagger } from '@elysiajs/swagger'
 import { cors } from '@elysiajs/cors'
-import { users } from './routes/users'
+import { users, user } from './routes/users'
 import { auth } from './routes/auth'
 import { register } from './routes/register'
 
 new Elysia()
     .use(
         cors({
-            origin: ['http://localhost:5173'], // Ajoutez l'URL de votre frontend
+            origin: ['http://localhost:5173'],
             credentials: true,
             allowedHeaders: ['Content-Type'],
             methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -28,6 +28,7 @@ new Elysia()
     .use(users)
     .use(auth)
     .use(register)
+    .use(user)
 
     .listen(3000, async () => {
         await createTable()

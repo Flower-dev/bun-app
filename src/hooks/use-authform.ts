@@ -99,6 +99,7 @@ export const useAuthForms = () => {
         onSuccess: (data) => {
             if (data.success && data.user) {
                 login({
+                    id: data.user.id,
                     email: data.user.email,
                     username: data.user.username,
                     isAuthenticated: true,
