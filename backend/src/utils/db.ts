@@ -3,7 +3,7 @@ import { Database } from 'bun:sqlite'
 const db = new Database('database.sqlite', { create: true })
 
 export function createTable() {
-    const stmt = db.prepare(`
+    const query = db.prepare(`
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
@@ -11,7 +11,7 @@ export function createTable() {
             password TEXT NOT NULL
         )
     `)
-    stmt.run()
+    query.run()
 }
 
 export function getDb() {

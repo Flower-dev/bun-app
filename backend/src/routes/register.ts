@@ -1,66 +1,105 @@
 import { Elysia, t } from 'elysia'
-import bcrypt from 'bcrypt'
+import { hashSync } from 'bcrypt'
 import { getDb } from '../utils/db'
+import { jwtPlugin } from '../config/jwt'
 
-const registerSchema = t.Object({
-    username: t.String(),
-    email: t.String(),
-    password: t.String(),
+const registerQuery = t.Object({
+    email: t.String({
+        format: 'email',
+        error: 'Un email valide est requis',
+    }),
+    password: t.String({
+        minLength: 6,
+        error: 'Le mot de passe doit contenir au moins 6 caractères',
+    }),
+    username: t.String({
+        minLength: 3,
+        error: "Le nom d'utilisateur doit contenir au moins 3 caractères",
+    }),
 })
 
-export const register = new Elysia({ prefix: '/auth' }).post(
+export const register = new Elysia().use(jwtPlugin).post(
     '/register',
-    async ({ body }) => {
+    async ({ body, set, jwt, cookie: { auth } }) => {
         try {
             const db = getDb()
-            const { username, email, password } = body as {
-                username: string
-                email: string
-                password: string
-            }
+            db.run('BEGIN TRANSACTION')
 
-            if (!username.trim() || !email.trim() || !password.trim()) {
-                return { status: 400, error: 'All fields are required' }
-            }
+            const userQuery = db.prepare('SELECT * FROM users WHERE email = ?')
+            const existingUser = userQuery.get(body.email)
 
-            if (username.toLowerCase() === email.toLowerCase()) {
-                return {
-                    status: 400,
-                    error: 'Username and email cannot be identical',
-                }
-            }
-
-            const passwordRegex =
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-            if (!passwordRegex.test(password)) {
-                return {
-                    status: 400,
-                    error: 'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character',
-                }
-            }
-
-            const existingUser = db
-                .query('SELECT id FROM users WHERE username = ? OR email = ?')
-                .get(username, email)
             if (existingUser) {
+                db.run('ROLLBACK')
+                set.status = 400
                 return {
-                    status: 409,
-                    error: 'Username or email already exists',
+                    success: false,
+                    message: 'Cet email est déjà utilisé',
                 }
             }
 
-            const saltRounds = 10
-            const password_hash = await bcrypt.hash(password, saltRounds)
+            const hashedPassword = hashSync(body.password, 10)
+            const insertUserQuery = db.prepare(
+                'INSERT INTO users (email, password, username) VALUES (?, ?, ?)'
+            )
+            const result = insertUserQuery.run(
+                body.email,
+                hashedPassword,
+                body.username
+            )
+            const userId = Number(result.lastInsertRowid)
 
-            db.query(
-                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)'
-            ).run(username, email, password_hash)
+            const token = await jwt.sign({
+                userId,
+                email: body.email,
+                username: body.username,
+            })
 
-            return { status: 201, message: 'User created successfully' }
+            auth.set({
+                value: token,
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 7 * 86400, // 7 days
+            })
+
+            db.run('COMMIT')
+            set.status = 201
+            return {
+                success: true,
+                user: {
+                    id: userId,
+                    email: body.email,
+                    username: body.username,
+                },
+            }
         } catch (error) {
-            console.error('Error creating user:', error)
-            return { status: 500, error: 'Internal server error' }
+            const db = getDb()
+            db.run('ROLLBACK')
+            console.error("Erreur lors de l'inscription :", error)
+            console.error(
+                'Stack trace:',
+                error instanceof Error ? error.stack : 'No stack trace'
+            )
+            set.status = 500
+            return {
+                success: false,
+                message:
+                    error instanceof Error ? error.message : 'Erreur serveur',
+            }
         }
     },
-    { body: registerSchema }
+    {
+        body: registerQuery,
+        response: t.Object({
+            success: t.Boolean(),
+            user: t.Optional(
+                t.Object({
+                    id: t.Number(),
+                    email: t.String(),
+                    username: t.String(),
+                })
+            ),
+            message: t.Optional(t.String()),
+        }),
+    }
 )

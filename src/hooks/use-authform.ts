@@ -12,35 +12,33 @@ const loginApi = async (data: LoginData) => {
         headers: {
             'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(data),
     })
 
     const result = await response.json()
 
-    if (!response.ok || result.error) {
-        throw new Error(
-            result.error || result.message || 'Erreur lors de la connexion'
-        )
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Erreur lors de la connexion')
     }
 
     return result
 }
 
 const registerApi = async (data: Omit<RegisterData, 'confirmPassword'>) => {
-    const response = await fetch(`${API_URL}/auth/register`, {
+    const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(data),
     })
 
     const result = await response.json()
 
-    if (!response.ok || result.error) {
-        throw new Error(
-            result.error || result.message || "Erreur lors de l'inscription"
-        )
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || "Erreur lors de l'inscription")
     }
 
     return result
@@ -121,15 +119,22 @@ export const useAuthForms = () => {
 
     const registerMutation = useMutation({
         mutationFn: async (data: RegisterData) => {
-            const { ...registerData } = data
+            const { confirmPassword, ...registerData } = data
             return registerApi(registerData)
         },
         onSuccess: (data) => {
-            if (data.status === 201) {
-                navigate('/auth/login')
+            if (data.success && data.user) {
+                login({
+                    id: data.user.id,
+                    email: data.user.email,
+                    username: data.user.username,
+                    isAuthenticated: true,
+                    timestamp: Date.now(),
+                })
+                navigate('/dashboard')
             } else {
                 setError({
-                    message: data.error || "Erreur lors de l'inscription",
+                    message: data.message || "Erreur lors de l'inscription",
                     code: 'REGISTER_ERROR',
                 })
             }

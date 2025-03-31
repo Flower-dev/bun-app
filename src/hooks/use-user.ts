@@ -17,15 +17,16 @@ const fetchUser = async (userId: string): Promise<UserResponse> => {
     const response = await fetch(`${API_URL}/user/${userId}`, {
         credentials: 'include',
     })
-    const data = await response.json()
 
-    if (!response.ok) {
+    const result = await response.json()
+
+    if (!response.ok || !result.success) {
         throw new Error(
-            data.message || "Erreur lors de la récupération de l'utilisateur"
+            result.message || "Erreur lors de la récupération de l'utilisateur"
         )
     }
 
-    return data
+    return result
 }
 
 export const useUser = (userId?: string) => {

@@ -19,9 +19,25 @@ new Elysia()
         swagger({
             documentation: {
                 info: {
-                    title: 'Elysia Documentation example',
-                    version: '0.0.0',
+                    title: 'API Documentation',
+                    version: '1.0.0',
+                    description: 'TO DO',
                 },
+                components: {
+                    securitySchemes: {
+                        cookieAuth: {
+                            type: 'apiKey',
+                            in: 'cookie',
+                            name: 'auth',
+                            description: "Cookie JWT pour l'authentification",
+                        },
+                    },
+                },
+                security: [
+                    {
+                        cookieAuth: [],
+                    },
+                ],
             },
         })
     )
