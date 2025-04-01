@@ -6,11 +6,11 @@ import { jwtPlugin } from '../config/jwt'
 const authQuery = t.Object({
     email: t.String({
         format: 'email',
-        error: 'Un email valide est requis',
+        error: 'A valid email is required',
     }),
     password: t.String({
         minLength: 6,
-        error: 'Le mot de passe doit contenir au moins 6 caractères',
+        error: 'Password must contain at least 6 characters',
     }),
 })
 
@@ -36,7 +36,7 @@ export const auth = new Elysia({ prefix: '/auth' })
                     set.status = 401
                     return {
                         success: false,
-                        message: 'Email ou mot de passe incorrect',
+                        message: 'Invalid email or password',
                     }
                 }
 
@@ -64,11 +64,11 @@ export const auth = new Elysia({ prefix: '/auth' })
                     },
                 }
             } catch (error) {
-                console.error('Erreur lors de la connexion :', error)
+                console.error('Error during login:', error)
                 set.status = 500
                 return {
                     success: false,
-                    message: 'Erreur serveur',
+                    message: 'Server error',
                 }
             }
         },
@@ -101,7 +101,7 @@ export const auth = new Elysia({ prefix: '/auth' })
             set.status = 200
             return {
                 success: true,
-                message: 'Déconnexion réussie',
+                message: 'Successfully logged out',
             }
         },
         {

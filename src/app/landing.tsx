@@ -14,11 +14,11 @@ const RssLandingPage = () => {
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
             {/* Hero Section */}
             <h1 className="text-8xl text-center font-extrabold mb-6 bg-gradient-to-r from-amber-600 to-purple-900 text-transparent bg-clip-text animate-fade-in">
-                Votre Contenu. Votre Flow.
+                Your Content. Your Flow.
             </h1>
             <p className="text-gray-700 text-xl max-w-2xl mx-auto leading-relaxed text-center">
-                Centralisez tous vos flux RSS en un seul endroit. Une expérience
-                moderne et intuitive pour suivre vos sources préférées.
+                Centralize all your RSS feeds in one place. A modern and
+                intuitive experience to follow your favorite sources.
             </p>
             <div className="flex gap-6 justify-center mt-10">
                 <Button
@@ -35,7 +35,7 @@ const RssLandingPage = () => {
                     onClick={handleGithubRedirect}
                 >
                     <Github className="mr-2" size={18} />
-                    Voir sur GitHub
+                    View on GitHub
                 </Button>
             </div>
 

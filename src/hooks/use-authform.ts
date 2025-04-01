@@ -19,14 +19,14 @@ const loginApi = async (data: LoginData) => {
     const result = await response.json()
 
     if (!response.ok || !result.success) {
-        throw new Error(result.message || 'Erreur lors de la connexion')
+        throw new Error(result.message || 'Error during login')
     }
 
     return result
 }
 
 const registerApi = async (data: Omit<RegisterData, 'confirmPassword'>) => {
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ const registerApi = async (data: Omit<RegisterData, 'confirmPassword'>) => {
     const result = await response.json()
 
     if (!response.ok || !result.success) {
-        throw new Error(result.message || "Erreur lors de l'inscription")
+        throw new Error(result.message || 'Error during registration')
     }
 
     return result
@@ -63,14 +63,14 @@ export const useAuthForms = () => {
     const validateLoginData = (data: LoginData): AuthError | null => {
         if (!data.email || !data.password)
             return {
-                message: 'Tous les champs sont requis',
+                message: 'All fields are required',
                 code: 'EMPTY_FIELDS',
             }
         if (!data.email.includes('@'))
-            return { message: 'Email invalide', code: 'INVALID_EMAIL' }
+            return { message: 'Invalid email', code: 'INVALID_EMAIL' }
         if (data.password.length < 6)
             return {
-                message: 'Le mot de passe doit contenir au moins 6 caractères',
+                message: 'Password must contain at least 6 characters',
                 code: 'INVALID_PASSWORD',
             }
         return null
@@ -81,12 +81,12 @@ export const useAuthForms = () => {
         if (error) return error
         if (!data.username)
             return {
-                message: "Nom d'utilisateur requis",
+                message: 'Username is required',
                 code: 'EMPTY_USERNAME',
             }
         if (data.password !== data.confirmPassword)
             return {
-                message: 'Les mots de passe ne correspondent pas',
+                message: 'Passwords do not match',
                 code: 'PASSWORD_MISMATCH',
             }
         return null
@@ -107,7 +107,7 @@ export const useAuthForms = () => {
                 navigate('/dashboard')
             } else {
                 setError({
-                    message: 'Erreur lors de la connexion',
+                    message: 'Error during login',
                     code: 'LOGIN_ERROR',
                 })
             }
@@ -119,8 +119,7 @@ export const useAuthForms = () => {
 
     const registerMutation = useMutation({
         mutationFn: async (data: RegisterData) => {
-            const { confirmPassword, ...registerData } = data
-            return registerApi(registerData)
+            return registerApi(data)
         },
         onSuccess: (data) => {
             if (data.success && data.user) {
@@ -134,7 +133,7 @@ export const useAuthForms = () => {
                 navigate('/dashboard')
             } else {
                 setError({
-                    message: data.message || "Erreur lors de l'inscription",
+                    message: data.message || 'Error during registration',
                     code: 'REGISTER_ERROR',
                 })
             }

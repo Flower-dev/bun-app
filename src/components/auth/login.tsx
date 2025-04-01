@@ -31,18 +31,16 @@ export function LoginPage() {
 
             if (!error) {
                 toast({
-                    title: 'Connexion réussie',
-                    description: 'Bienvenue sur votre gestionnaire de flux RSS',
+                    title: 'Login successful',
+                    description: 'Welcome to your RSS feed manager',
                 })
             }
         } catch (err) {
             toast({
                 variant: 'destructive',
-                title: 'Erreur',
+                title: 'Error',
                 description:
-                    err instanceof Error
-                        ? err.message
-                        : 'Erreur lors de la connexion',
+                    err instanceof Error ? err.message : 'Error during login',
             })
         }
     }
@@ -51,11 +49,9 @@ export function LoginPage() {
         <div className="flex min-h-screen items-center justify-center bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold">
-                        Connexion
-                    </CardTitle>
+                    <CardTitle className="text-2xl font-bold">Login</CardTitle>
                     <CardDescription>
-                        Entrez vos identifiants pour accéder à votre compte
+                        Enter your credentials to access your account
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={onSubmit}>
@@ -82,7 +78,7 @@ export function LoginPage() {
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Mot de passe</Label>
+                                <Label htmlFor="password">Password</Label>
                                 <Button
                                     variant="link"
                                     className="p-0 h-auto text-xs"
@@ -91,7 +87,7 @@ export function LoginPage() {
                                     }
                                     type="button"
                                 >
-                                    Mot de passe oublié?
+                                    Forgot password?
                                 </Button>
                             </div>
                             <div className="relative">
@@ -124,8 +120,8 @@ export function LoginPage() {
                                     )}
                                     <span className="sr-only">
                                         {showPassword
-                                            ? 'Cacher le mot de passe'
-                                            : 'Afficher le mot de passe'}
+                                            ? 'Hide password'
+                                            : 'Show password'}
                                     </span>
                                 </Button>
                             </div>
@@ -140,21 +136,21 @@ export function LoginPage() {
                             {isLoading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Connexion en cours...
+                                    Logging in...
                                 </>
                             ) : (
-                                'Se connecter'
+                                'Login'
                             )}
                         </Button>
                         <div className="text-center text-sm">
-                            Vous n'avez pas de compte?{' '}
+                            You don't have an account?{' '}
                             <Button
                                 variant="link"
                                 className="p-0 h-auto"
                                 onClick={() => navigate('/signup')}
                                 type="button"
                             >
-                                Créer un compte
+                                Create an account
                             </Button>
                         </div>
                     </CardFooter>

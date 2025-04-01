@@ -21,9 +21,7 @@ const fetchUser = async (userId: string): Promise<UserResponse> => {
     const result = await response.json()
 
     if (!response.ok || !result.success) {
-        throw new Error(
-            result.message || "Erreur lors de la récupération de l'utilisateur"
-        )
+        throw new Error(result.message || 'Error while fetching user')
     }
 
     return result

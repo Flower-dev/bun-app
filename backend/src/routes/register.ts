@@ -6,24 +6,23 @@ import { jwtPlugin } from '../config/jwt'
 const registerQuery = t.Object({
     email: t.String({
         format: 'email',
-        error: 'Un email valide est requis',
+        error: 'A valid email is required',
     }),
     password: t.String({
         minLength: 6,
-        error: 'Le mot de passe doit contenir au moins 6 caractères',
+        error: 'Password must contain at least 6 characters',
     }),
     username: t.String({
         minLength: 3,
-        error: "Le nom d'utilisateur doit contenir au moins 3 caractères",
+        error: 'Username must contain at least 3 characters',
     }),
 })
 
-export const register = new Elysia().use(jwtPlugin).post(
+export const register = new Elysia({ prefix: '/auth' }).use(jwtPlugin).post(
     '/register',
     async ({ body, set, jwt, cookie: { auth } }) => {
         try {
             const db = getDb()
-            db.run('BEGIN TRANSACTION')
 
             const userQuery = db.prepare('SELECT * FROM users WHERE email = ?')
             const existingUser = userQuery.get(body.email)
@@ -33,7 +32,7 @@ export const register = new Elysia().use(jwtPlugin).post(
                 set.status = 400
                 return {
                     success: false,
-                    message: 'Cet email est déjà utilisé',
+                    message: 'This email is already in use',
                 }
             }
 
@@ -75,7 +74,7 @@ export const register = new Elysia().use(jwtPlugin).post(
         } catch (error) {
             const db = getDb()
             db.run('ROLLBACK')
-            console.error("Erreur lors de l'inscription :", error)
+            console.error('Error during registration:', error)
             console.error(
                 'Stack trace:',
                 error instanceof Error ? error.stack : 'No stack trace'
@@ -84,7 +83,7 @@ export const register = new Elysia().use(jwtPlugin).post(
             return {
                 success: false,
                 message:
-                    error instanceof Error ? error.message : 'Erreur serveur',
+                    error instanceof Error ? error.message : 'Server error',
             }
         }
     },

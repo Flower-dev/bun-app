@@ -16,7 +16,7 @@ export const users = new Elysia().use(jwtPlugin).get(
                 set.status = 401
                 return {
                     success: false,
-                    message: 'Non authentifié',
+                    message: 'Not authenticated',
                 }
             }
 
@@ -25,7 +25,7 @@ export const users = new Elysia().use(jwtPlugin).get(
                 set.status = 401
                 return {
                     success: false,
-                    message: 'Token invalide',
+                    message: 'Invalid token',
                 }
             }
 
@@ -40,14 +40,11 @@ export const users = new Elysia().use(jwtPlugin).get(
                 users: rows,
             }
         } catch (error) {
-            console.error(
-                'Erreur lors de la récupération des utilisateurs:',
-                error
-            )
+            console.error('Error while fetching users:', error)
             set.status = 500
             return {
                 success: false,
-                message: 'Erreur serveur',
+                message: 'Server error',
             }
         }
     },
@@ -76,7 +73,7 @@ export const user = new Elysia().use(jwtPlugin).get(
                 set.status = 401
                 return {
                     success: false,
-                    message: 'Non authentifié',
+                    message: 'Not authenticated',
                 }
             }
 
@@ -85,7 +82,7 @@ export const user = new Elysia().use(jwtPlugin).get(
                 set.status = 401
                 return {
                     success: false,
-                    message: 'Token invalide',
+                    message: 'Invalid token',
                 }
             }
 
@@ -99,7 +96,7 @@ export const user = new Elysia().use(jwtPlugin).get(
                 set.status = 404
                 return {
                     success: false,
-                    message: 'Utilisateur non trouvé',
+                    message: 'User not found',
                 }
             }
 
@@ -109,14 +106,11 @@ export const user = new Elysia().use(jwtPlugin).get(
                 user,
             }
         } catch (error) {
-            console.error(
-                "Erreur lors de la récupération de l'utilisateur:",
-                error
-            )
+            console.error('Error while fetching user:', error)
             set.status = 500
             return {
                 success: false,
-                message: 'Erreur serveur',
+                message: 'Server error',
             }
         }
     },

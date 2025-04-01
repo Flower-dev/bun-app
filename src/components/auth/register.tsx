@@ -37,18 +37,18 @@ export function SignupPage() {
 
             if (!error) {
                 toast({
-                    title: 'Compte créé avec succès',
-                    description: 'Vous pouvez maintenant vous connecter',
+                    title: 'Account created successfully',
+                    description: 'You can now log in',
                 })
             }
         } catch (err) {
             toast({
                 variant: 'destructive',
-                title: 'Erreur',
+                title: 'Error',
                 description:
                     err instanceof Error
                         ? err.message
-                        : "Erreur lors de l'inscription",
+                        : 'Error during registration',
             })
         }
     }
@@ -58,10 +58,10 @@ export function SignupPage() {
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold">
-                        Créer un compte
+                        Create an account
                     </CardTitle>
                     <CardDescription>
-                        Entrez vos informations pour créer votre compte
+                        Enter your information to create your account
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={onSubmit}>
@@ -74,7 +74,7 @@ export function SignupPage() {
                             </Alert>
                         )}
                         <div className="space-y-2">
-                            <Label htmlFor="username">Nom d'utilisateur</Label>
+                            <Label htmlFor="username">Username</Label>
                             <Input
                                 id="username"
                                 placeholder="JohnDoe"
@@ -102,7 +102,7 @@ export function SignupPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Mot de passe</Label>
+                            <Label htmlFor="password">Password</Label>
                             <div className="relative">
                                 <Input
                                     id="password"
@@ -133,15 +133,15 @@ export function SignupPage() {
                                     )}
                                     <span className="sr-only">
                                         {showPassword
-                                            ? 'Cacher le mot de passe'
-                                            : 'Afficher le mot de passe'}
+                                            ? 'Hide password'
+                                            : 'Show password'}
                                     </span>
                                 </Button>
                             </div>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="confirmPassword">
-                                Confirmer le mot de passe
+                                Confirm password
                             </Label>
                             <div className="relative">
                                 <Input
@@ -179,14 +179,13 @@ export function SignupPage() {
                                     )}
                                     <span className="sr-only">
                                         {showConfirmPassword
-                                            ? 'Cacher le mot de passe'
-                                            : 'Afficher le mot de passe'}
+                                            ? 'Hide password'
+                                            : 'Show password'}
                                     </span>
                                 </Button>
                             </div>
                             <p className="text-xs text-muted-foreground mt-1">
-                                Le mot de passe doit contenir au moins 6
-                                caractères
+                                Password must contain at least 6 characters
                             </p>
                         </div>
                     </CardContent>
@@ -199,21 +198,21 @@ export function SignupPage() {
                             {isLoading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Création en cours...
+                                    Creating account...
                                 </>
                             ) : (
-                                'Créer un compte'
+                                'Create account'
                             )}
                         </Button>
                         <div className="text-center text-sm">
-                            Vous avez déjà un compte?{' '}
+                            You already have an account?{' '}
                             <Button
                                 variant="link"
                                 className="p-0 h-auto"
                                 onClick={() => navigate('/login')}
                                 type="button"
                             >
-                                Se connecter
+                                Login
                             </Button>
                         </div>
                     </CardFooter>

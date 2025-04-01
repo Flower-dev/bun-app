@@ -29,7 +29,7 @@ new Elysia()
                             type: 'apiKey',
                             in: 'cookie',
                             name: 'auth',
-                            description: "Cookie JWT pour l'authentification",
+                            description: 'TO DO',
                         },
                     },
                 },
