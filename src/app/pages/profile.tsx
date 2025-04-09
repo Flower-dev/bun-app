@@ -1,6 +1,6 @@
 import type React from 'react'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Loader2, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
+// import { Textarea } from '@/components/ui/textarea'
 import {
     Select,
     SelectContent,
@@ -35,10 +35,6 @@ export default function Profile() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        bio: '',
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
     })
 
     const [preferences, setPreferences] = useState({
@@ -50,16 +46,15 @@ export default function Profile() {
         openLinksInNewTab: true,
     })
 
-    // Mettre à jour les données du formulaire lorsque le profil est chargé
-    useState(() => {
-        if (userData?.user) {
-            setFormData({
-                ...formData,
+    useEffect(() => {
+        if (userData && userData.user) {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
                 name: userData.user.username,
                 email: userData.user.email,
-            })
+            }))
         }
-    })
+    }, [userData])
 
     const handleProfileSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -85,9 +80,6 @@ export default function Profile() {
             setIsSaving(false)
             setFormData({
                 ...formData,
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: '',
             })
             toast({
                 title: 'Mot de passe mis à jour',
@@ -171,7 +163,7 @@ export default function Profile() {
                                         }
                                     />
                                 </div>
-                                <div className="space-y-2">
+                                {/* <div className="space-y-2">
                                     <Label htmlFor="bio">Bio</Label>
                                     <Textarea
                                         id="bio"
@@ -184,7 +176,7 @@ export default function Profile() {
                                         }
                                         className="min-h-[100px]"
                                     />
-                                </div>
+                                </div> */}
                             </CardContent>
                             <CardFooter>
                                 <Button type="submit" disabled={isSaving}>
@@ -220,7 +212,7 @@ export default function Profile() {
                                     <Label htmlFor="current-password">
                                         Mot de passe actuel
                                     </Label>
-                                    <Input
+                                    {/* <Input
                                         id="current-password"
                                         type="password"
                                         value={formData.currentPassword}
@@ -230,13 +222,13 @@ export default function Profile() {
                                                 currentPassword: e.target.value,
                                             })
                                         }
-                                    />
+                                    /> */}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="new-password">
                                         Nouveau mot de passe
                                     </Label>
-                                    <Input
+                                    {/* <Input
                                         id="new-password"
                                         type="password"
                                         value={formData.newPassword}
@@ -246,13 +238,13 @@ export default function Profile() {
                                                 newPassword: e.target.value,
                                             })
                                         }
-                                    />
+                                    /> */}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="confirm-password">
                                         Confirmer le mot de passe
                                     </Label>
-                                    <Input
+                                    {/* <Input
                                         id="confirm-password"
                                         type="password"
                                         value={formData.confirmPassword}
@@ -262,7 +254,7 @@ export default function Profile() {
                                                 confirmPassword: e.target.value,
                                             })
                                         }
-                                    />
+                                    /> */}
                                 </div>
                             </CardContent>
                             <CardFooter>

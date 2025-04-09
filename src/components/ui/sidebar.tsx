@@ -19,25 +19,25 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     const routes = [
         {
             href: '/dashboard',
-            label: 'Tableau de bord',
+            label: 'Dashboard',
             icon: LayoutDashboard,
             active: location.pathname === '/dashboard',
         },
         {
             href: '/feeds',
-            label: 'Mes flux',
+            label: 'Feeds',
             icon: BookOpen,
             active: location.pathname === '/feeds',
         },
         {
             href: '/discover',
-            label: 'Découvrir',
+            label: 'Discover',
             icon: Compass,
             active: location.pathname === '/discover',
         },
         {
             href: '/profile',
-            label: 'Profil',
+            label: 'Profile',
             icon: User,
             active: location.pathname === '/profile',
         },
