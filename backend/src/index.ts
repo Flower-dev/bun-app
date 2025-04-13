@@ -5,7 +5,7 @@ import { cors } from '@elysiajs/cors'
 import { users, user } from './routes/users'
 import { auth } from './routes/auth'
 import { register } from './routes/register'
-import { feeds } from './routes/feed'
+import { feeds, feed } from './routes/feed'
 
 new Elysia()
     .use(
@@ -47,6 +47,7 @@ new Elysia()
     .use(register)
     .use(user)
     .use(feeds)
+    .use(feed)
 
     .listen(3000, async () => {
         await createTable()
