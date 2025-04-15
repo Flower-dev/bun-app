@@ -1,7 +1,6 @@
 'use client'
 
 import { useNavigate, useLocation } from 'react-router-dom'
-import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
@@ -50,7 +49,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
     return (
         <>
-            {/* Sidebar pour mobile (Sheet) */}
             <Sheet open={open} onOpenChange={onClose}>
                 <SheetContent side="left" className="p-0">
                     <div className="flex items-center justify-between p-4 border-b">
@@ -58,10 +56,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                             <Rss className="h-5 w-5 mr-2" />
                             <span className="font-bold">RSS Feed</span>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={onClose}>
-                            <X className="h-5 w-5" />
-                            <span className="sr-only">Fermer</span>
-                        </Button>
                     </div>
                     <ScrollArea className="h-[calc(100vh-60px)]">
                         <div className="p-4 space-y-2">
@@ -82,9 +76,8 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                     </ScrollArea>
                 </SheetContent>
             </Sheet>
-
             {/* Sidebar pour desktop */}
-            <div className="hidden md:block w-64  bg-background h-[calc(100vh-64px)] sticky top-16">
+            <div className="hidden md:block w-64  bg-background ">
                 <ScrollArea className="h-full">
                     <div className="p-4 space-y-2">
                         {routes.map((route) => (
