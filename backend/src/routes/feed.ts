@@ -83,9 +83,12 @@ export const feed = new Elysia().use(jwtPlugin).post(
             }
 
             const db = getDb()
-            const { url } = body
 
-            db.query('INSERT INTO feeds (url) VALUES (?)', [url])
+            const stmt = db.prepare('INSERT INTO feeds (url) VALUES (?)')
+            stmt.run(body.url)
+
+            // recuperer ID feed
+            // insert id feed + id user in  user_feed
 
             set.status = 201
             return {
@@ -102,6 +105,9 @@ export const feed = new Elysia().use(jwtPlugin).post(
         }
     },
     {
+        body: t.Object({
+            url: t.String(),
+        }),
         response: t.Object({
             success: t.Boolean(),
             message: t.Optional(t.String()),

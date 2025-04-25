@@ -1,4 +1,3 @@
-import type React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
@@ -14,35 +13,92 @@ import {
     CardTitle,
 } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
-import { useAuthForms } from '@/hooks/use-authform'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useMutation } from '@tanstack/react-query'
+import { useAuth } from '@/context/authContext'
+
+const API_URL = 'http://localhost:3000'
+
+const loginSchema = z.object({
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(6, 'Password must contain at least 6 characters'),
+})
+
+type LoginFormValues = z.infer<typeof loginSchema>
+
+// Function to call the login API
+const loginApi = async (data: LoginFormValues) => {
+    const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(data),
+    })
+
+    const result = await response.json()
+
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Error during login')
+    }
+
+    return result
+}
 
 export function LoginPage() {
     const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate()
     const { toast } = useToast()
-    const { loginData, updateLoginData, handleLogin, error, isLoading } =
-        useAuthForms()
+    const { login } = useAuth()
+    const [error, setError] = useState<{ message: string } | null>(null)
 
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        try {
-            await handleLogin(e)
+    const form = useForm<LoginFormValues>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    })
 
-            if (!error) {
+    const loginMutation = useMutation({
+        mutationFn: loginApi,
+        onSuccess: (data) => {
+            if (data.success && data.user) {
+                login({
+                    id: data.user.id,
+                    email: data.user.email,
+                    username: data.user.username,
+                    isAuthenticated: true,
+                    timestamp: Date.now(),
+                })
                 toast({
                     title: 'Login successful',
                     description: 'Welcome to your RSS feed manager',
                 })
+                navigate('/dashboard')
+            } else {
+                setError({
+                    message: 'Error during login',
+                })
             }
-        } catch (err) {
+        },
+        onError: (error: Error) => {
+            setError({ message: error.message })
             toast({
                 variant: 'destructive',
                 title: 'Error',
-                description:
-                    err instanceof Error ? err.message : 'Error during login',
+                description: error.message || 'Error during login',
             })
-        }
+        },
+    })
+
+    const onSubmit = async (data: LoginFormValues) => {
+        setError(null)
+        loginMutation.mutate(data)
     }
 
     return (
@@ -54,7 +110,7 @@ export function LoginPage() {
                         Enter your credentials to access your account
                     </CardDescription>
                 </CardHeader>
-                <form onSubmit={onSubmit}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
                     <CardContent className="space-y-4">
                         {error && (
                             <Alert variant="destructive">
@@ -68,13 +124,14 @@ export function LoginPage() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="exemple@email.com"
-                                value={loginData.email}
-                                onChange={(e) =>
-                                    updateLoginData('email', e.target.value)
-                                }
-                                required
+                                placeholder="example@email.com"
+                                {...form.register('email')}
                             />
+                            {form.formState.errors.email && (
+                                <p className="text-sm text-red-500 mt-1">
+                                    {form.formState.errors.email.message}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
@@ -95,14 +152,7 @@ export function LoginPage() {
                                     id="password"
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="••••••••"
-                                    value={loginData.password}
-                                    onChange={(e) =>
-                                        updateLoginData(
-                                            'password',
-                                            e.target.value
-                                        )
-                                    }
-                                    required
+                                    {...form.register('password')}
                                 />
                                 <Button
                                     type="button"
@@ -125,15 +175,20 @@ export function LoginPage() {
                                     </span>
                                 </Button>
                             </div>
+                            {form.formState.errors.password && (
+                                <p className="text-sm text-red-500 mt-1">
+                                    {form.formState.errors.password.message}
+                                </p>
+                            )}
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
                         <Button
                             type="submit"
                             className="w-full"
-                            disabled={isLoading}
+                            disabled={loginMutation.isPending}
                         >
-                            {isLoading ? (
+                            {loginMutation.isPending ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Logging in...

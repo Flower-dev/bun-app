@@ -21,14 +21,12 @@ const registerQuery = t.Object({
 export const register = new Elysia({ prefix: '/auth' }).use(jwtPlugin).post(
     '/register',
     async ({ body, set, jwt, cookie: { auth } }) => {
+        const db = getDb()
         try {
-            const db = getDb()
-
             const userQuery = db.prepare('SELECT * FROM users WHERE email = ?')
             const existingUser = userQuery.get(body.email)
 
             if (existingUser) {
-                db.run('ROLLBACK')
                 set.status = 400
                 return {
                     success: false,
@@ -61,7 +59,6 @@ export const register = new Elysia({ prefix: '/auth' }).use(jwtPlugin).post(
                 maxAge: 7 * 86400, // 7 days
             })
 
-            db.run('COMMIT')
             set.status = 201
             return {
                 success: true,
@@ -72,8 +69,6 @@ export const register = new Elysia({ prefix: '/auth' }).use(jwtPlugin).post(
                 },
             }
         } catch (error) {
-            const db = getDb()
-            db.run('ROLLBACK')
             console.error('Error during registration:', error)
             console.error(
                 'Stack trace:',

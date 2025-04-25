@@ -1,4 +1,3 @@
-import type React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
@@ -14,43 +13,108 @@ import {
     CardTitle,
 } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
-import { useAuthForms } from '@/hooks/use-authform'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useMutation } from '@tanstack/react-query'
+import { useAuth } from '@/context/authContext'
+
+const API_URL = 'http://localhost:3000'
+
+const registerSchema = z
+    .object({
+        username: z.string().min(1, 'Username is required'),
+        email: z.string().email('Invalid email address'),
+        password: z
+            .string()
+            .min(6, 'Password must contain at least 6 characters'),
+        confirmPassword: z.string().min(6, 'Confirm your password'),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords don't match",
+        path: ['confirmPassword'],
+    })
+
+type RegisterFormValues = z.infer<typeof registerSchema>
+
+// Function to call the register API
+const registerApi = async (
+    data: Omit<RegisterFormValues, 'confirmPassword'>
+) => {
+    const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(data),
+    })
+
+    const result = await response.json()
+
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Error during registration')
+    }
+
+    return result
+}
 
 export function SignupPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const navigate = useNavigate()
     const { toast } = useToast()
-    const {
-        registerData,
-        updateRegisterData,
-        handleRegister,
-        error,
-        isLoading,
-    } = useAuthForms()
+    const { login } = useAuth()
+    const [error, setError] = useState<{ message: string } | null>(null)
 
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        try {
-            await handleRegister(e)
+    const form = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+        },
+    })
 
-            if (!error) {
+    const registerMutation = useMutation({
+        mutationFn: async ({ ...registerData }: RegisterFormValues) => {
+            return registerApi(registerData)
+        },
+        onSuccess: (data) => {
+            if (data.success && data.user) {
+                login({
+                    id: data.user.id,
+                    email: data.user.email,
+                    username: data.user.username,
+                    isAuthenticated: true,
+                    timestamp: Date.now(),
+                })
                 toast({
                     title: 'Account created successfully',
-                    description: 'You can now log in',
+                    description: 'You are now logged in',
+                })
+                navigate('/dashboard')
+            } else {
+                setError({
+                    message: 'Error during registration',
                 })
             }
-        } catch (err) {
+        },
+        onError: (error: Error) => {
+            setError({ message: error.message })
             toast({
                 variant: 'destructive',
                 title: 'Error',
-                description:
-                    err instanceof Error
-                        ? err.message
-                        : 'Error during registration',
+                description: error.message || 'Error during registration',
             })
-        }
+        },
+    })
+
+    const onSubmit = async (data: RegisterFormValues) => {
+        setError(null)
+        registerMutation.mutate(data)
     }
 
     return (
@@ -64,7 +128,7 @@ export function SignupPage() {
                         Enter your information to create your account
                     </CardDescription>
                 </CardHeader>
-                <form onSubmit={onSubmit}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
                     <CardContent className="space-y-4">
                         {error && (
                             <Alert variant="destructive">
@@ -78,28 +142,27 @@ export function SignupPage() {
                             <Input
                                 id="username"
                                 placeholder="JohnDoe"
-                                value={registerData.username}
-                                onChange={(e) =>
-                                    updateRegisterData(
-                                        'username',
-                                        e.target.value
-                                    )
-                                }
-                                required
+                                {...form.register('username')}
                             />
+                            {form.formState.errors.username && (
+                                <p className="text-sm text-red-500 mt-1">
+                                    {form.formState.errors.username.message}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="exemple@email.com"
-                                value={registerData.email}
-                                onChange={(e) =>
-                                    updateRegisterData('email', e.target.value)
-                                }
-                                required
+                                placeholder="example@email.com"
+                                {...form.register('email')}
                             />
+                            {form.formState.errors.email && (
+                                <p className="text-sm text-red-500 mt-1">
+                                    {form.formState.errors.email.message}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="password">Password</Label>
@@ -108,14 +171,7 @@ export function SignupPage() {
                                     id="password"
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="••••••••"
-                                    value={registerData.password}
-                                    onChange={(e) =>
-                                        updateRegisterData(
-                                            'password',
-                                            e.target.value
-                                        )
-                                    }
-                                    required
+                                    {...form.register('password')}
                                 />
                                 <Button
                                     type="button"
@@ -138,6 +194,11 @@ export function SignupPage() {
                                     </span>
                                 </Button>
                             </div>
+                            {form.formState.errors.password && (
+                                <p className="text-sm text-red-500 mt-1">
+                                    {form.formState.errors.password.message}
+                                </p>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="confirmPassword">
@@ -152,14 +213,7 @@ export function SignupPage() {
                                             : 'password'
                                     }
                                     placeholder="••••••••"
-                                    value={registerData.confirmPassword}
-                                    onChange={(e) =>
-                                        updateRegisterData(
-                                            'confirmPassword',
-                                            e.target.value
-                                        )
-                                    }
-                                    required
+                                    {...form.register('confirmPassword')}
                                 />
                                 <Button
                                     type="button"
@@ -184,6 +238,14 @@ export function SignupPage() {
                                     </span>
                                 </Button>
                             </div>
+                            {form.formState.errors.confirmPassword && (
+                                <p className="text-sm text-red-500 mt-1">
+                                    {
+                                        form.formState.errors.confirmPassword
+                                            .message
+                                    }
+                                </p>
+                            )}
                             <p className="text-xs text-muted-foreground mt-1">
                                 Password must contain at least 6 characters
                             </p>
@@ -193,9 +255,9 @@ export function SignupPage() {
                         <Button
                             type="submit"
                             className="w-full"
-                            disabled={isLoading}
+                            disabled={registerMutation.isPending}
                         >
-                            {isLoading ? (
+                            {registerMutation.isPending ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Creating account...
