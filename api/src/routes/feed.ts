@@ -72,7 +72,6 @@ export const feed = new Elysia().use(jwtPlugin).post(
                     message: 'Not authenticated',
                 }
             }
-
             const payload = await jwt.verify(auth.value)
             if (!payload) {
                 set.status = 401
@@ -84,11 +83,24 @@ export const feed = new Elysia().use(jwtPlugin).post(
 
             const db = getDb()
 
-            const stmt = db.prepare('INSERT INTO feeds (url) VALUES (?)')
-            stmt.run(body.url)
+            const existingFeed = db
+                .prepare('SELECT id FROM feeds WHERE url = ?')
+                .get(body.url)
 
-            // recuperer ID feed
-            // insert id feed + id user in  user_feed
+            let feedId
+
+            if (existingFeed) {
+                feedId = existingFeed.id
+            } else {
+                const { lastInsertRowid } = db
+                    .prepare('INSERT INTO feeds (url) VALUES (?)')
+                    .run(body.url)
+                feedId = lastInsertRowid
+            }
+
+            db.prepare(
+                'INSERT INTO user_feed (user_id, feed_id) VALUES (?, ?)'
+            ).run(payload.userId, feedId)
 
             set.status = 201
             return {

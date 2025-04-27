@@ -13,7 +13,7 @@ export function createTable() {
 
         CREATE TABLE IF NOT EXISTS feeds (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              url TEXT NOT NULL
+              url TEXT NOT NULL UNIQUE
         );
 
         CREATE TABLE IF NOT EXISTS user_feed (
