@@ -28,5 +28,74 @@
         "title": "Tableau de bord",
         "welcome": "Bienvenue, {{username}}",
         "logoutButton": "Déconnexion"
+    },
+    "profile": {
+        "title": "Profil",
+        "description": "Gérez vos informations personnelles et vos préférences",
+        "tabs": {
+            "account": "Compte",
+            "password": "Mot de passe",
+            "preferences": "Préférences"
+        },
+        "account": {
+            "title": "Informations du compte",
+            "description": "Mettez à jour vos informations personnelles",
+            "fullName": "Nom complet",
+            "email": "Email"
+        },
+        "password": {
+            "title": "Changer le mot de passe",
+            "description": "Mettez à jour votre mot de passe pour sécuriser votre compte",
+            "current": "Mot de passe actuel",
+            "new": "Nouveau mot de passe",
+            "confirm": "Confirmer le mot de passe"
+        },
+        "preferences": {
+            "title": "Préférences",
+            "subtitle": "Personnalisez votre expérience de lecture",
+            "appearance": {
+                "title": "Apparence",
+                "theme": "Thème",
+                "themes": {
+                    "light": "Mode clair",
+                    "dark": "Mode sombre"
+                }
+            },
+            "language": {
+                "title": "Langue",
+                "label": "Langue de l'interface",
+                "languages": {
+                    "fr": "Français",
+                    "en": "Anglais"
+                }
+            },
+            "notifications": {
+                "title": "Notifications",
+                "email": {
+                    "title": "Notifications par email",
+                    "description": "Recevoir des notifications par email pour les nouveaux articles"
+                },
+                "push": {
+                    "title": "Notifications push",
+                    "description": "Recevoir des notifications push pour les nouveaux articles"
+                }
+            },
+            "reading": {
+                "title": "Lecture",
+                "articlesPerPage": "Articles par page",
+                "markReadOnScroll": {
+                    "title": "Marquer comme lu au défilement",
+                    "description": "Marquer automatiquement les articles comme lus lors du défilement"
+                },
+                "openLinksInNewTab": {
+                    "title": "Ouvrir les liens dans un nouvel onglet",
+                    "description": "Ouvrir automatiquement les liens des articles dans un nouvel onglet"
+                }
+            }
+        },
+        "buttons": {
+            "save": "Enregistrer",
+            "saving": "Enregistrement..."
+        }
     }
 }

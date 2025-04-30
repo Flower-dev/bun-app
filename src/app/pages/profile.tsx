@@ -2,6 +2,7 @@ import type React from 'react'
 
 import { useState, useEffect } from 'react'
 import { Loader2, Save } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     Card,
@@ -26,11 +27,14 @@ import {
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
 import { useUser } from '@/hooks/use-user'
+import { useTheme } from '../../context/themeContext'
 
 export default function Profile() {
+    const { t, i18n } = useTranslation()
     const { toast } = useToast()
     const [isSaving, setIsSaving] = useState(false)
     const { data: userData, isLoading } = useUser()
+    const { theme, setTheme } = useTheme()
 
     const [formData, setFormData] = useState({
         name: '',
@@ -38,7 +42,8 @@ export default function Profile() {
     })
 
     const [preferences, setPreferences] = useState({
-        theme: 'system',
+        theme: 'light',
+        language: 'fr',
         emailNotifications: true,
         pushNotifications: false,
         articlesPerPage: 10,
@@ -113,31 +118,43 @@ export default function Profile() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Profil</h1>
+                <h1 className="text-3xl font-bold tracking-tight">
+                    {t('profile.title')}
+                </h1>
                 <p className="text-muted-foreground">
-                    Gérez vos informations personnelles et vos préférences
+                    {t('profile.description')}
                 </p>
             </div>
 
             <Tabs defaultValue="account">
                 <TabsList className="mb-4">
-                    <TabsTrigger value="account">Compte</TabsTrigger>
-                    <TabsTrigger value="password">Mot de passe</TabsTrigger>
-                    <TabsTrigger value="preferences">Préférences</TabsTrigger>
+                    <TabsTrigger value="account">
+                        {t('profile.tabs.account')}
+                    </TabsTrigger>
+                    <TabsTrigger value="password">
+                        {t('profile.tabs.password')}
+                    </TabsTrigger>
+                    <TabsTrigger value="preferences">
+                        {t('profile.tabs.preferences')}
+                    </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="account">
                     <Card>
                         <form onSubmit={handleProfileSubmit}>
                             <CardHeader>
-                                <CardTitle>Informations du compte</CardTitle>
+                                <CardTitle>
+                                    {t('profile.account.title')}
+                                </CardTitle>
                                 <CardDescription>
-                                    Mettez à jour vos informations personnelles
+                                    {t('profile.account.description')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="name">Nom complet</Label>
+                                    <Label htmlFor="name">
+                                        {t('profile.account.fullName')}
+                                    </Label>
                                     <Input
                                         id="name"
                                         value={formData.name}
@@ -150,7 +167,9 @@ export default function Profile() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="email">Email</Label>
+                                    <Label htmlFor="email">
+                                        {t('profile.account.email')}
+                                    </Label>
                                     <Input
                                         id="email"
                                         type="email"
@@ -183,12 +202,12 @@ export default function Profile() {
                                     {isSaving ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Enregistrement...
+                                            {t('profile.buttons.saving')}
                                         </>
                                     ) : (
                                         <>
                                             <Save className="mr-2 h-4 w-4" />
-                                            Enregistrer
+                                            {t('profile.buttons.save')}
                                         </>
                                     )}
                                 </Button>
@@ -201,10 +220,11 @@ export default function Profile() {
                     <Card>
                         <form onSubmit={handlePasswordSubmit}>
                             <CardHeader>
-                                <CardTitle>Changer le mot de passe</CardTitle>
+                                <CardTitle>
+                                    {t('profile.password.title')}
+                                </CardTitle>
                                 <CardDescription>
-                                    Mettez à jour votre mot de passe pour
-                                    sécuriser votre compte
+                                    {t('profile.password.description')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -262,12 +282,12 @@ export default function Profile() {
                                     {isSaving ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Enregistrement...
+                                            {t('profile.buttons.saving')}
                                         </>
                                     ) : (
                                         <>
                                             <Save className="mr-2 h-4 w-4" />
-                                            Mettre à jour le mot de passe
+                                            {t('profile.buttons.save')}
                                         </>
                                     )}
                                 </Button>
@@ -280,39 +300,55 @@ export default function Profile() {
                     <Card>
                         <form onSubmit={handlePreferencesSubmit}>
                             <CardHeader>
-                                <CardTitle>Préférences</CardTitle>
+                                <CardTitle>
+                                    {t('profile.preferences.title')}
+                                </CardTitle>
                                 <CardDescription>
-                                    Personnalisez votre expérience de lecture
+                                    {t('profile.preferences.subtitle')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-medium">
-                                        Apparence
+                                        {t(
+                                            'profile.preferences.appearance.title'
+                                        )}
                                     </h3>
                                     <div className="space-y-2">
-                                        <Label htmlFor="theme">Thème</Label>
+                                        <Label htmlFor="theme">
+                                            {t(
+                                                'profile.preferences.appearance.theme'
+                                            )}
+                                        </Label>
                                         <Select
-                                            value={preferences.theme}
-                                            onValueChange={(value) =>
+                                            value={theme}
+                                            onValueChange={(value) => {
+                                                setTheme(
+                                                    value as 'light' | 'dark'
+                                                )
                                                 setPreferences({
                                                     ...preferences,
                                                     theme: value,
                                                 })
-                                            }
+                                            }}
                                         >
                                             <SelectTrigger id="theme">
-                                                <SelectValue placeholder="Sélectionner un thème" />
+                                                <SelectValue
+                                                    placeholder={t(
+                                                        'profile.preferences.appearance.theme'
+                                                    )}
+                                                />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="light">
-                                                    Clair
+                                                    {t(
+                                                        'profile.preferences.appearance.themes.light'
+                                                    )}
                                                 </SelectItem>
                                                 <SelectItem value="dark">
-                                                    Sombre
-                                                </SelectItem>
-                                                <SelectItem value="system">
-                                                    Système
+                                                    {t(
+                                                        'profile.preferences.appearance.themes.dark'
+                                                    )}
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -323,16 +359,68 @@ export default function Profile() {
 
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-medium">
-                                        Notifications
+                                        {t(
+                                            'profile.preferences.language.title'
+                                        )}
+                                    </h3>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="language">
+                                            {t(
+                                                'profile.preferences.language.label'
+                                            )}
+                                        </Label>
+                                        <Select
+                                            value={i18n.language}
+                                            onValueChange={(value) => {
+                                                i18n.changeLanguage(value)
+                                                setPreferences({
+                                                    ...preferences,
+                                                    language: value,
+                                                })
+                                            }}
+                                        >
+                                            <SelectTrigger id="language">
+                                                <SelectValue
+                                                    placeholder={t(
+                                                        'profile.preferences.language.label'
+                                                    )}
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="fr">
+                                                    {t(
+                                                        'profile.preferences.language.languages.fr'
+                                                    )}
+                                                </SelectItem>
+                                                <SelectItem value="en">
+                                                    {t(
+                                                        'profile.preferences.language.languages.en'
+                                                    )}
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+
+                                <Separator />
+
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium">
+                                        {t(
+                                            'profile.preferences.notifications.title'
+                                        )}
                                     </h3>
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label htmlFor="email-notifications">
-                                                Notifications par email
+                                                {t(
+                                                    'profile.preferences.notifications.email.title'
+                                                )}
                                             </Label>
                                             <p className="text-sm text-muted-foreground">
-                                                Recevoir des notifications par
-                                                email pour les nouveaux articles
+                                                {t(
+                                                    'profile.preferences.notifications.email.description'
+                                                )}
                                             </p>
                                         </div>
                                         <Switch
@@ -351,11 +439,14 @@ export default function Profile() {
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
                                             <Label htmlFor="push-notifications">
-                                                Notifications push
+                                                {t(
+                                                    'profile.preferences.notifications.push.title'
+                                                )}
                                             </Label>
                                             <p className="text-sm text-muted-foreground">
-                                                Recevoir des notifications push
-                                                pour les nouveaux articles
+                                                {t(
+                                                    'profile.preferences.notifications.push.description'
+                                                )}
                                             </p>
                                         </div>
                                         <Switch
@@ -377,7 +468,7 @@ export default function Profile() {
 
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-medium">
-                                        Lecture
+                                        {t('profile.preferences.reading.title')}
                                     </h3>
                                     <div className="space-y-2">
                                         <Label htmlFor="articles-per-page">
@@ -468,12 +559,12 @@ export default function Profile() {
                                     {isSaving ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Enregistrement...
+                                            {t('profile.buttons.saving')}
                                         </>
                                     ) : (
                                         <>
                                             <Save className="mr-2 h-4 w-4" />
-                                            Enregistrer les préférences
+                                            {t('profile.buttons.save')}
                                         </>
                                     )}
                                 </Button>

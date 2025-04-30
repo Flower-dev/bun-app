@@ -28,5 +28,74 @@
         "title": "Dashboard",
         "welcome": "Welcome, {{username}}",
         "logoutButton": "Sign out"
+    },
+    "profile": {
+        "title": "Profile",
+        "description": "Manage your personal information and preferences",
+        "tabs": {
+            "account": "Account",
+            "password": "Password",
+            "preferences": "Preferences"
+        },
+        "account": {
+            "title": "Account Information",
+            "description": "Update your personal information",
+            "fullName": "Full Name",
+            "email": "Email"
+        },
+        "password": {
+            "title": "Change Password",
+            "description": "Update your password to secure your account",
+            "current": "Current Password",
+            "new": "New Password",
+            "confirm": "Confirm Password"
+        },
+        "preferences": {
+            "title": "Preferences",
+            "subtitle": "Customize your reading experience",
+            "appearance": {
+                "title": "Appearance",
+                "theme": "Theme",
+                "themes": {
+                    "light": "Light mode",
+                    "dark": "Dark mode"
+                }
+            },
+            "language": {
+                "title": "Language",
+                "label": "Interface language",
+                "languages": {
+                    "fr": "French",
+                    "en": "English"
+                }
+            },
+            "notifications": {
+                "title": "Notifications",
+                "email": {
+                    "title": "Email notifications",
+                    "description": "Receive email notifications for new articles"
+                },
+                "push": {
+                    "title": "Push notifications",
+                    "description": "Receive push notifications for new articles"
+                }
+            },
+            "reading": {
+                "title": "Reading",
+                "articlesPerPage": "Articles per page",
+                "markReadOnScroll": {
+                    "title": "Mark as read on scroll",
+                    "description": "Automatically mark articles as read when scrolling"
+                },
+                "openLinksInNewTab": {
+                    "title": "Open links in new tab",
+                    "description": "Automatically open article links in a new tab"
+                }
+            }
+        },
+        "buttons": {
+            "save": "Save",
+            "saving": "Saving..."
+        }
     }
 }
