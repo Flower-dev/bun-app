@@ -12,8 +12,8 @@ export function createTable() {
         );
 
         CREATE TABLE IF NOT EXISTS feeds (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              url TEXT NOT NULL UNIQUE
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            url TEXT NOT NULL UNIQUE
         );
 
         CREATE TABLE IF NOT EXISTS user_feed (
@@ -22,6 +22,15 @@ export function createTable() {
             PRIMARY KEY (user_id, feed_id),
             FOREIGN KEY (user_id) REFERENCES users(id),
             FOREIGN KEY (feed_id) REFERENCES feeds(id)
+        );
+
+        CREATE TABLE IF NOT EXISTS articles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            author TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            link TEXT NOT NULL
         );
 
     `)

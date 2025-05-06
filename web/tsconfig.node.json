@@ -10,7 +10,6 @@
         "skipLibCheck": true,
 
         /* Bundler mode */
-        "allowImportingTsExtensions": true,
         "isolatedModules": true,
         "moduleDetection": "force",
 

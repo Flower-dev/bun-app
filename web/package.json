@@ -6,14 +6,12 @@
     "scripts": {
         "dev": "bunx --bun vite",
         "build": "tsc -b && vite build",
-        "lint": "eslint .",
-        "preview": "vite preview",
-        "prepare": "husky",
-        "prettier:write": "prettier . --write",
-        "prettier:check": "prettier . --check"
+        "prepare": "husky"
     },
     "lint-staged": {
-        "**/*": "prettier --write --ignore-unknown"
+        "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+            "prettier --write"
+        ]
     },
     "dependencies": {
         "@blocknote/core": "^0.22.0",

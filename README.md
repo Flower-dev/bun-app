@@ -1,118 +1,112 @@
-# Modern React Application with TypeScript and Vite
+# RSS Feed Project
 
-This project is a modern web application built with React, TypeScript, and Vite, featuring a robust development environment and a comprehensive set of tools and libraries.
+A modern web application for managing and reading RSS feeds, built with a robust architecture combining a TypeScript-based frontend and backend.
 
-## 🚀 Tech Stack
+## 🚀 Project Overview
 
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite 6
-- **Styling**: Tailwind CSS with animations
-- **State Management**: React Query (TanStack Query)
-- **Form Handling**: React Hook Form with Zod validation
-- **UI Components**: Radix UI primitives with custom styling with shadcn
-- **Rich Text Editor**: BlockNote
-- **Routing**: React Router DOM
-- **Internationalization**: i18next
-- **Date Handling**: date-fns
-- **Code Quality**: ESLint, Prettier, and Husky for Git hooks
+This project is a full-stack RSS feed reader application that allows users to:
+- Subscribe to and manage RSS feeds
+- Read and organize articles
+- Track updates from favorite sources
+- Enjoy a modern, responsive user interface
 
-## 🛠️ Development Setup
+## 🏗️ Project Structure
 
-1. **Prerequisites**
+The project is organized into two main components:
 
-    - Node.js (latest LTS version recommended)
-    - Bun (for faster development experience)
+### Frontend (`/web`)
+- Built with TypeScript and Vite
+- Uses modern UI components with Tailwind CSS
+- Implements responsive design principles
+- Features a clean and intuitive user interface
 
-2. **Installation**
+### Backend (`/api`)
+- TypeScript-based REST API
+- SQLite database for data persistence
+- Secure and efficient data handling
+- RESTful endpoints for feed management
 
-    ```bash
-    # Install dependencies
-    bun install
-    ```
+## 🛠️ Technology Stack
 
-3. **Available Scripts**
+### Frontend
+- TypeScript
+- Vite
+- Tailwind CSS
+- Modern UI Components
+- ESLint & Prettier for code quality
 
-    ```bash
-    # Start development server
-    bun run dev
+### Backend
+- TypeScript
+- SQLite Database
+- RESTful API Architecture
+- Secure Authentication
 
-    # Build for production
-    bun run build
+## 🚦 Getting Started
 
-    # Preview production build
-    bun run preview
+### Prerequisites
+- Node.js (Latest LTS version)
+- Bun package manager
+- Git
+- Docker and Docker Compose (for containerized setup)
 
-    # Lint code
-    bun run lint
+### Installation
 
-    # Format code with Prettier
-    bun run prettier:write
+#### Option 1: Local Development
 
-    # Check code formatting
-    bun run prettier:check
-    ```
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd rss-feed
+```
 
-## 🔧 Configuration
+2. Install dependencies for both frontend and backend:
+```bash
+# Install frontend dependencies
+cd web
+bun install
 
-The project includes several configuration files:
+# Install backend dependencies
+cd ../api
+bun install
+```
 
-- `tsconfig.json` - TypeScript configuration
-- `vite.config.ts` - Vite build configuration
-- `tailwind.config.js` - Tailwind CSS configuration
-- `eslint.config.js` - ESLint configuration
-- `.prettierrc` - Prettier configuration
-- `postcss.config.js` - PostCSS configuration
+3. Start the development servers:
+```bash
+# Start backend server (from api directory)
+bun run dev
 
-## 🎨 UI Components
+# Start frontend server (from web directory)
+bun run dev
+```
 
-The project uses a combination of:
+#### Option 2: Docker Setup
 
-- Radix UI primitives for accessible components with shadcn
-- Custom styled components using Tailwind CSS
-- Lucide React for icons
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd rss-feed
+```
 
-## 🌐 Internationalization
+2. Build and start the containers:
+```bash
+docker-compose up --build
+```
 
-The application supports multiple languages using i18next and react-i18next.
+The application will be available at:
+- Frontend: http://localhost
+- Backend API: http://localhost:3000
 
-## 📦 Dependencies
+## 📝 Development
 
-The project uses modern versions of all dependencies, including:
-
-- React 18.3
-- TypeScript 5.6
-- Vite 6
-- Tailwind CSS 3.4
-- React Query 5.67
-- React Hook Form 7.56
-- Zod 3.24
-
-## 🔍 Code Quality
-
-The project maintains high code quality through:
-
-- TypeScript for type safety
+The project uses several development tools to ensure code quality:
 - ESLint for code linting
 - Prettier for code formatting
-- Husky for pre-commit hooks
-- Lint-staged for staged file processing
-
-## 📝 Development Guidelines
-
-1. **Type Safety**: Always use TypeScript types and interfaces
-2. **Component Structure**: Follow React best practices for component organization
-3. **Styling**: Use Tailwind CSS classes for styling
-4. **Form Handling**: Use React Hook Form with Zod validation
-5. **State Management**: Use React Query for server state and React Context for local state
-6. **Accessibility**: Follow WCAG guidelines using Radix UI primitives
+- Husky for git hooks
+- TypeScript for type safety
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
