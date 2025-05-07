@@ -105,8 +105,8 @@ export function LoginPage() {
         <div className="flex min-h-screen items-center justify-center bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold">Login</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-2xl text-center font-bold bg-gradient-to-r from-amber-600 to-purple-900 text-transparent bg-clip-text animate-fade-in">Login</CardTitle>
+                    <CardDescription className="text-center">
                         Enter your credentials to access your account
                     </CardDescription>
                 </CardHeader>
@@ -185,7 +185,7 @@ export function LoginPage() {
                     <CardFooter className="flex flex-col space-y-4">
                         <Button
                             type="submit"
-                            className="w-full"
+                            className="w-full bg-purple-950 shadow-lg hover:bg-purple-700 transition-transform transform hover:scale-105 px-6 py-3"
                             disabled={loginMutation.isPending}
                         >
                             {loginMutation.isPending ? (
