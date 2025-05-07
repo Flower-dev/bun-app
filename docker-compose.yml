@@ -6,10 +6,22 @@ services:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./api/database.sqlite:/app/database.sqlite
       - ./api/src:/app/src
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+    
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:5173:5173"
+    volumes:
+      - ./web/src:/app/src
     environment:
       - NODE_ENV=development
     restart: unless-stopped
