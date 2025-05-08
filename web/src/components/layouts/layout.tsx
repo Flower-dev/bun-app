@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom'
 import { MobileNav } from '@/components/mobile-nav'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Sidebar } from '@/components/ui/sidebar'
-import { Separator } from '@/components/ui/separator'
 import { useMobile } from '@/hooks/use-mobile'
 import { UserNav } from '@/components/user-nav'
 
@@ -24,7 +23,6 @@ export default function DashboardLayout() {
                     <UserNav />
                 </div>
             </header>
-            <Separator />
             <div className="flex flex-1">
                 <Sidebar
                     open={sidebarOpen}
